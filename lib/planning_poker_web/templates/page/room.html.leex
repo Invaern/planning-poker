@@ -1,0 +1,16 @@
+<div class="container mx-auto bg-white shadow-md rounded">
+<%= @room_id %>
+
+<%= if @user_name do %>
+    <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
+<% else %>
+    <%= render(PlanningPokerWeb.BoardView, "login.html", assigns) %>
+<% end %>
+
+<span><%= live_patch "Log in", to: Routes.room_path(@socket, :log_in, @room_id) %></span>
+<%= if @live_action == :log_in do %>
+<%= live_modal @socket, PlanningPokerWeb.RoomLive.UserFormComponent,
+    return_to: Routes.room_path(@socket, :index, @room_id) %>
+<% end %>
+
+</div>

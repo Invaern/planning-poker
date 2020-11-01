@@ -1,0 +1,4 @@
+<%= f = form_for :join, Routes.session_path(PlanningPokerWeb.Endpoint, :sign_in)  %>
+  <%= text_input f, :user_name, placeholder: "Name", value: "", class: "test_class" %>
+  <%= submit "join" %>
+</form>

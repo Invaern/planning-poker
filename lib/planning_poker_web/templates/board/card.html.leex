@@ -1,0 +1,12 @@
+<div class="rounded shadow flex flex-col w-20 border-gray-200 border-solid border ">
+    <div class="flex justify-center items-center p-2 h-20">
+    <%= case @card do
+     :empty -> render "card_empty.html"
+     {:visible, value} -> render "card_visible.html", value: value
+     {:hidden, value} -> render "card_hidden.html", value: value
+    end %>
+    </div>
+    <div class="flex justify-center bg-gray-100 p-2">
+        <span class="truncate">Bobslovki Kowalsky</span>
+    </div>
+</div>

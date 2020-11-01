@@ -1,0 +1,12 @@
+{
+    "tailwindCSS.includeLanguages": {
+        "elixir": "html"
+    },
+    "files.exclude": {
+        "**/*.beam": true,
+        "**/*.cmi": true,
+        "**/*.cmj": true,
+        "**/*.cmt": true,
+        "**/*.reast": true
+    }
+}
