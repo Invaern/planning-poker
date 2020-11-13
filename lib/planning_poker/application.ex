@@ -12,7 +12,9 @@ defmodule PlanningPoker.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: PlanningPoker.PubSub},
       # Start the Endpoint (http/https)
-      PlanningPokerWeb.Endpoint
+      PlanningPokerWeb.Endpoint,
+      {Registry, keys: :unique, name: PlanningPoker.RoomRegistry},
+      {DynamicSupervisor, strategy: :one_for_one, name: PlanningPoker.RoomSupervisor}
       # Start a worker by calling: PlanningPoker.Worker.start_link(arg)
       # {PlanningPoker.Worker, arg}
     ]

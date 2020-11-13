@@ -1,0 +1,13 @@
+<div class="container flex justify-center items-center   flex-col mx-auto bg-white shadow rounded p-4">
+<h1>Planning Poker</h1>
+<div>
+    <%= f = form_for :join, "#", [phx_submit: :save, phx_change: :validate, class: "flex flex-col"]  %>
+    <div class="flex border-b border-blue-500 py-1">
+        <%= text_input f, :room_id, placeholder: "Room", value: "", class: "appearance-none   w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"  %>
+        <%= submit "enter", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+    </div>
+        <%= error_tag f, @errors, :room_id %>
+    </form>
+</div>
+
+</div>

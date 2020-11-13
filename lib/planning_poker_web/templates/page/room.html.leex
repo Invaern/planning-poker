@@ -4,7 +4,7 @@
 <%= if @user_name do %>
     <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
 <% else %>
-    <%= render(PlanningPokerWeb.BoardView, "login.html", assigns) %>
+<%= live_component @socket, PlanningPokerWeb.RoomLive.UserFormComponent, id: @room_id, room_id: @room_id, trigger_submit: false, errors: [] %>
 <% end %>
 
 <span><%= live_patch "Log in", to: Routes.room_path(@socket, :log_in, @room_id) %></span>
