@@ -7,7 +7,7 @@ defmodule PlanningPoker.Room do
     {:via, Registry, {PlanningPoker.RoomRegistry, room_id}}
   end
 
-  def start(room_id) do
+  defp start(room_id) do
     result = DynamicSupervisor.start_child(PlanningPoker.RoomSupervisor, {PlanningPoker.Room, room_id: room_id, name: via_tuple(room_id)})
     case result do
      {:ok, _pid}  -> :ok
@@ -16,7 +16,15 @@ defmodule PlanningPoker.Room do
     end
   end
 
+  @doc """
+  Returns %Room{} with given `room_id`
+
+  Room is retreived from associated `PlanningPoker.Room` process.
+  If such process does not exist, it is started first.
+  It is possible for this function to fail if spawning process fails.
+  """
   def get_room(room_id) do
+    :ok = start(room_id)
     GenServer.call(via_tuple(room_id), :room)
   end
 
@@ -27,6 +35,20 @@ defmodule PlanningPoker.Room do
         :ok
       {:error, err} -> {:error, err}
     end
+  end
+
+  @doc """
+  Removes participant `name` from room `room_id`.
+
+  New room state is broadcasted to topic `room:<room_id>` as `{:room_update, room}`
+
+  Returns :ok
+  """
+  def leave(room_id, name) do
+    room = GenServer.call(via_tuple(room_id), {:leave, name})
+    :logger.debug("User #{name} left #{room_id}")
+    IO.inspect(room)
+    broadcast_msg(room_id, {:room_update, room})
   end
 
   defp broadcast_msg(room_id, msg) do
@@ -60,7 +82,12 @@ defmodule PlanningPoker.Room do
         {:reply, {:ok, room} , room, @timeout}
       err -> {:reply, err, room, @timeout}
     end
+  end
 
+  @impl true
+  def handle_call({:leave, name}, _from, room) do
+    room = Room.remove_participant(room, name)
+    {:reply, room, room, @timeout}
   end
 
   @impl true

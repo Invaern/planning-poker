@@ -11,21 +11,23 @@ defmodule PlanningPokerWeb.RoomLive do
     IO.puts("mounting")
     # IO.inspect(params)
     # IO.inspect(session)
-    :ok = PlanningPoker.Room.start(room_id)
+    room = PlanningPoker.Room.get_room(room_id)
     :ok = Phoenix.PubSub.subscribe(PlanningPoker.PubSub, "room:" <> room_id)
 
     p_socket = socket
       |> assign(user_name: nil)
       |> assign(trigger_submit: false)
       |> assign(errors: [])
-      |> assign(room_id: room_id)
+      |> assign_room(room)
 
     {:ok, p_socket}
   end
 
-  @impl true
-  def handle_info({:joined, user_name}, socket) do
-    {:noreply, assign(socket, user_name: user_name)}
+  defp assign_room(socket, room) do
+    socket
+    |> assign(room_id: room.room_id)
+    |> assign(cards: Map.values(room.cards))
+    |> assign(participants: Map.values(room.participants))
   end
 
 
@@ -43,12 +45,29 @@ defmodule PlanningPokerWeb.RoomLive do
   end
 
   @impl true
+  def handle_info({:joined, user_name}, socket) do
+    IO.puts("user joined")
+    IO.inspect(socket.assigns)
+    {:noreply, assign(socket, user_name: user_name)}
+  end
+
+
+  @impl true
   def handle_info({:room_update, room}, socket) do
     IO.puts("Room update arrived")
     IO.inspect(room)
     cards = Map.values(room.cards)
     participants = Map.values(room.participants)
     {:noreply, assign(socket, cards: cards, participants: participants)}
+  end
+
+  @impl true
+  def terminate(_reason, socket) do
+    user_name = socket.assigns.user_name
+    room_id = socket.assigns.room_id
+    if user_name do
+      :ok = PlanningPoker.Room.leave(room_id, user_name)
+    end
   end
 
 end
