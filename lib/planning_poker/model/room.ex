@@ -28,24 +28,23 @@ defmodule Room do
 
 
 
-  def add_participant(room, name) do
+  def add_participant(room, name, monitor_ref) do
     if Map.has_key?(room.participants, name) do
       {:error, :name_taken}
     else
-      participant = %Participant{name: name}
-      participants = Map.put_new(room.participants, name, participant)
+      participant = %Participant{name: name, monitor_ref: monitor_ref}
+      participants = Map.put(room.participants, name, participant)
       cards = Map.put_new(room.cards, name, %Card{owner: name})
-      # new_room = put_in(room.participants, participants)
       new_room = %{room | participants: participants, cards: cards}
 
-      {:ok, new_room}
+      {:ok, new_room, participant}
     end
   end
 
   def remove_participant(room, name) do
-    {_, participants} = Map.pop(room.participants, name)
-    card = Map.pop(room.cards, name)
-    {_, cards} = if Card.is_empty(card),  do: Map.pop(room.cards, name), else: {nil, room.cards}
+    participants = Map.delete(room.participants, name)
+    {card, other_cards} = Map.pop(room.cards, name)
+    cards = if Card.is_empty(card),  do: other_cards, else: room.cards
     %{room | participants: participants, cards: cards}
   end
 

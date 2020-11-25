@@ -16,6 +16,7 @@ defmodule PlanningPokerWeb.RoomLive do
 
     p_socket = socket
       |> assign(user_name: nil)
+      |> assign(user: nil)
       |> assign(trigger_submit: false)
       |> assign(errors: [])
       |> assign_room(room)
@@ -45,10 +46,32 @@ defmodule PlanningPokerWeb.RoomLive do
   end
 
   @impl true
-  def handle_info({:joined, user_name}, socket) do
+  def handle_event("vote", %{"ref" => val}, socket) do
+    value_atom = case val do
+      "half" -> :half
+      "one" -> :one
+      "two" -> :two
+      "three" -> :three
+      "five" -> :five
+      "eight" -> :eight
+      "thirteen" -> :thirteen
+      "twenty" -> :twenty
+      "question" -> :question
+    end
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("toggle_participant", %{"ref" => name}, socket) do
+    :logger.info("Toggling #{name}")
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:joined, user}, socket) do
     IO.puts("user joined")
     IO.inspect(socket.assigns)
-    {:noreply, assign(socket, user_name: user_name)}
+    {:noreply, assign(socket, user: user)}
   end
 
 
@@ -61,13 +84,13 @@ defmodule PlanningPokerWeb.RoomLive do
     {:noreply, assign(socket, cards: cards, participants: participants)}
   end
 
-  @impl true
-  def terminate(_reason, socket) do
-    user_name = socket.assigns.user_name
-    room_id = socket.assigns.room_id
-    if user_name do
-      :ok = PlanningPoker.Room.leave(room_id, user_name)
-    end
-  end
+  # @impl true
+  # def terminate(_reason, socket) do
+  #   user_name = socket.assigns.user_name
+  #   room_id = socket.assigns.room_id
+  #   if user_name do
+  #     :ok = PlanningPoker.Room.leave(room_id, user_name)
+  #   end
+  # end
 
 end

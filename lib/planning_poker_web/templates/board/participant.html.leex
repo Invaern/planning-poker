@@ -1,3 +1,15 @@
-<div>
-<%= @participant.name %>
-<div>
+<div class="flex items-center space-x-2">
+    <%= case @participant.type do %>
+        <% :player ->  %>
+            <div class="w-5 h-5 text-blue-500 fill-current transition transform hover:scale-150"
+                 phx-click="toggle_participant" phx-value-ref="<%= @participant.name %>">
+                <%= render(PlanningPokerWeb.IconView, "icon_player.html") %>
+            </div>
+        <% :observer -> %>
+            <div class="text-gray-600 transition transform hover:scale-150"
+                 phx-click="toggle_participant" phx-value-ref="<%= @participant.name %>">
+                <%= render(PlanningPokerWeb.IconView, "icon_eye.html") %>
+            </div>
+    <% end %>
+    <span class="text-lg"><%= @participant.name %></span>
+</div>

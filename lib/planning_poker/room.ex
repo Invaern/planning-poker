@@ -28,11 +28,17 @@ defmodule PlanningPoker.Room do
     GenServer.call(via_tuple(room_id), :room)
   end
 
+  @doc """
+  Adds player to the room.
+  Participant is created as :player by default.
+
+  Returns {:ok, participant} | {:error, reason}
+  """
   def add_participant(room_id, name) do
     case GenServer.call(via_tuple(room_id), {:join, name}) do
-      {:ok, room} ->
-        broadcast_msg(room_id, {:room_update, room})
-        :ok
+      {:ok, room, participant} ->
+        broadcast_room_update(room)
+        {:ok, participant}
       {:error, err} -> {:error, err}
     end
   end
@@ -51,6 +57,10 @@ defmodule PlanningPoker.Room do
     broadcast_msg(room_id, {:room_update, room})
   end
 
+  defp broadcast_room_update(room) do
+    broadcast_msg(room.room_id, {:room_update, room})
+  end
+
   defp broadcast_msg(room_id, msg) do
     Phoenix.PubSub.broadcast!(PlanningPoker.PubSub, "room:" <> room_id, msg)
   end
@@ -65,7 +75,7 @@ defmodule PlanningPoker.Room do
 
   @impl true
   def init(room) do
-    {:ok, room}
+    {:ok,  room}
   end
 
   @impl true
@@ -74,12 +84,16 @@ defmodule PlanningPoker.Room do
   end
 
   @impl true
-  def handle_call({:join, name}, _from, room) do
-    join_result = Room.add_participant(room, name)
+  def handle_call({:join, name}, {pid, _ref}, room) do
+    IO.puts("user joining")
+    IO.inspect(pid)
+    monitor_ref = Process.monitor(pid)
+    IO.inspect(monitor_ref)
+    join_result = Room.add_participant(room, name, monitor_ref)
     case join_result do
-      {:ok, room} ->
+      {:ok, room, participant} ->
         :logger.info("User #{name} joined")
-        {:reply, {:ok, room} , room, @timeout}
+        {:reply, {:ok, room, participant} , room, @timeout}
       err -> {:reply, err, room, @timeout}
     end
   end
@@ -105,5 +119,15 @@ defmodule PlanningPoker.Room do
     {:stop, :normal, room}
   end
 
+  @impl true
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, room) do
+    user_to_remove = Map.values(room.participants)
+      |> Enum.find_value(&(ref == &1.monitor_ref && &1.name))
 
+    :logger.warning("User process died. User: #{user_to_remove}")
+    new_room = Room.remove_participant(room, user_to_remove)
+    broadcast_room_update(new_room)
+
+    {:noreply, new_room}
+  end
 end

@@ -1,21 +1,14 @@
-<div class="container mx-auto bg-white shadow-md rounded">
-<%= @room_id %>
-
-<%= if @user_name do %>
-    <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
-<% else %>
-<%= live_component @socket, PlanningPokerWeb.RoomLive.UserFormComponent, id: @room_id, room_id: @room_id, trigger_submit: false, errors: [] %>
-<% end %>
-<div>
-<%= for participant <- @participants do %>
-    <%= render(PlanningPokerWeb.BoardView, "participant.html", participant: participant) %>
-<% end %>
-</div>
-
-<span><%= live_patch "Log in", to: Routes.room_path(@socket, :log_in, @room_id) %></span>
-<%= if @live_action == :log_in do %>
-<%= live_modal @socket, PlanningPokerWeb.RoomLive.UserFormComponent,
-    return_to: Routes.room_path(@socket, :index, @room_id) %>
-<% end %>
-
+<div class="container mx-auto bg-gray-50 shadow rounded flex min-h-3/4-screen">
+    <div class="flex-1 p-4 flex  shadow z-10">
+        <%= if @user do %>
+            <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
+        <% else %>
+        <%= live_component @socket, PlanningPokerWeb.RoomLive.UserFormComponent, id: @room_id, room_id: @room_id, trigger_submit: false, errors: [] %>
+        <% end %>
+    </div>
+    <div class="w-80 p-4 bg-white">
+        <%= for participant <- @participants do %>
+            <%= render(PlanningPokerWeb.BoardView, "participant.html", participant: participant) %>
+        <% end %>
+    </div>
 </div>

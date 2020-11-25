@@ -1,12 +1,8 @@
-<div class="rounded shadow flex flex-col w-20 border-gray-200 border-solid border ">
-    <div class="flex justify-center items-center p-2 h-20">
-    <%= case @card do
-     :empty -> render "card_empty.html"
-     {:visible, value} -> render "card_visible.html", value: value
-     {:hidden, value} -> render "card_hidden.html", value: value
-    end %>
+<div class="rounded shadow flex flex-col flex-shrink-0 w-24 h-36 border-gray-100 border-solid border m-2">
+    <div class="flex flex-1 justify-center items-center">
+    <%= content_tag(:span, @value, class: Enum.join(["font-medium", "text-7xl", "tracking-tight", @color], " ")) %>
     </div>
-    <div class="flex justify-center bg-gray-100 p-2">
-        <span class="truncate">Bobslovki Kowalsky</span>
+    <div class="flex justify-center items-center h-8 bg-gray-100">
+        <div class="truncate"><%= @owner %></div>
     </div>
 </div>

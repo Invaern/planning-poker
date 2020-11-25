@@ -6,10 +6,10 @@ defmodule PlanningPokerWeb.RoomLive.UserFormComponent do
   def render(assigns) do
     assigns = Map.put_new(assigns, :user_input, "")
     ~L"""
-    <div>
-    <%= f = form_for :join, "#", [phx_submit: :save, phx_change: :validate, phx_target: @myself,  class: "flex flex-col"]  %>
+    <div class="w-full flex justify-center items-center">
+    <%= f = form_for :join, "#", [phx_submit: :save, phx_change: :validate, phx_target: @myself,  class: "w-1/2 flex flex-col"]  %>
     <div class="flex border-b border-blue-500 py-1">
-        <%= text_input f, :user_name, placeholder: "Name", value: @user_input, class: "appearance-none   w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"  %>
+        <%= text_input f, :user_name, placeholder: "Name", value: @user_input, class: "appearance-none w-full py-2 px-3 bg-gray-50 text-gray-700 leading-tight focus:outline-none"  %>
         <%= hidden_input f, :room_id, value: @room_id %>
         <%= submit "enter", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
     </div>
@@ -38,8 +38,8 @@ defmodule PlanningPokerWeb.RoomLive.UserFormComponent do
 
     if is_username_valid(user_name) do
       case PlanningPoker.Room.add_participant(room_id, user_name) do
-        :ok ->
-          send(self(), {:joined, user_name})
+        {:ok, particpant} ->
+          send(self(), {:joined, particpant})
           {:noreply, assign(socket, errors: [], user_input: "")}
         {:error, :name_taken} -> {:noreply, assign(socket, user_input: user_name, errors: [user_name: "Name already taken"])}
       end
