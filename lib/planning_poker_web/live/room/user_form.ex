@@ -7,28 +7,17 @@ defmodule PlanningPokerWeb.RoomLive.UserFormComponent do
     assigns = Map.put_new(assigns, :user_input, "")
     ~L"""
     <div class="w-full flex justify-center items-center">
-    <%= f = form_for :join, "#", [phx_submit: :save, phx_change: :validate, phx_target: @myself,  class: "w-1/2 flex flex-col"]  %>
+    <%= f = form_for :join, "#", [phx_submit: :save, phx_target: @myself,  class: "w-1/2 flex flex-col"]  %>
     <div class="flex border-b border-blue-500 py-1">
-        <%= text_input f, :user_name, placeholder: "Name", value: @user_input, class: "appearance-none w-full py-2 px-3 bg-gray-50 text-gray-700 leading-tight focus:outline-none"  %>
+        <%= text_input f, :user_name, placeholder: "Name", value: @user_input,
+            class: "appearance-none w-full py-2 px-3 bg-gray-50 text-gray-700 leading-tight focus:outline-none"  %>
         <%= hidden_input f, :room_id, value: @room_id %>
-        <%= submit "enter", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+        <%= submit "enter", class: "transition-colors bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
     </div>
         <%= error_tag f, @errors, :user_name %>
     </form>
     </div>
     """
-  end
-
-  @impl true
-  def handle_event("validate", %{"join" => %{"user_name" => user_name}}, socket) do
-    IO.puts("user form validate")
-    # IO.inspect(payload)
-
-    if is_username_valid(user_name) do
-      {:noreply, assign(socket, errors: [])}
-    else
-      {:noreply, assign(socket, errors: [user_name: "Name can't be blank"])}
-    end
   end
 
   @impl true

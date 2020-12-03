@@ -13,7 +13,7 @@ defmodule PlanningPokerWeb.BoardView do
   end
 
   defp get_color_value(:empty), do: {"text-gray-200", "?"}
-  defp get_color_value({:hidden, _}), do: {"text-yellow-400", "!"}
+  defp get_color_value({:hidden, _}), do: {"text-lime-500", "!"}
 
   defp get_color_value({:visible, value}) do
     case value do

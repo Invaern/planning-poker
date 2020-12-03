@@ -8,14 +8,11 @@ defmodule PlanningPokerWeb.RoomLive do
 
   @impl true
   def mount(%{"id" => room_id} = _params,  _session, socket) do
-    IO.puts("mounting")
-    # IO.inspect(params)
-    # IO.inspect(session)
     room = PlanningPoker.Room.get_room(room_id)
     :ok = Phoenix.PubSub.subscribe(PlanningPoker.PubSub, "room:" <> room_id)
 
     p_socket = socket
-      |> assign(user_name: nil)
+      |> assign(user_card: nil)
       |> assign(user: nil)
       |> assign(trigger_submit: false)
       |> assign(errors: [])
@@ -27,6 +24,7 @@ defmodule PlanningPokerWeb.RoomLive do
   defp assign_room(socket, room) do
     socket
     |> assign(room_id: room.room_id)
+    |> assign(room: room)
     |> assign(cards: Map.values(room.cards))
     |> assign(participants: Map.values(room.participants))
   end
@@ -58,20 +56,34 @@ defmodule PlanningPokerWeb.RoomLive do
       "twenty" -> :twenty
       "question" -> :question
     end
+    :ok = PlanningPoker.Room.vote(socket.assigns.room_id, socket.assigns.user.name, value_atom)
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("toggle_participant", %{"ref" => name}, socket) do
-    :logger.info("Toggling #{name}")
+    PlanningPoker.Room.toggle_participant(socket.assigns.room_id, name)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("reveal", _, socket) do
+    PlanningPoker.Room.reveal(socket.assigns.room.room_id)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("new_draw", _, socket) do
+    PlanningPoker.Room.new_draw(socket.assigns.room.room_id)
     {:noreply, socket}
   end
 
   @impl true
   def handle_info({:joined, user}, socket) do
-    IO.puts("user joined")
-    IO.inspect(socket.assigns)
-    {:noreply, assign(socket, user: user)}
+    IO.puts("user joined, #{inspect(user)}")
+    user_card = get_user_card(user, socket.assigns.room)
+
+    {:noreply, assign(socket, user: user, user_card: user_card)}
   end
 
 
@@ -80,8 +92,20 @@ defmodule PlanningPokerWeb.RoomLive do
     IO.puts("Room update arrived")
     IO.inspect(room)
     cards = Map.values(room.cards)
+    user_card = get_user_card(socket.assigns.user, room)
     participants = Map.values(room.participants)
-    {:noreply, assign(socket, cards: cards, participants: participants)}
+    {:noreply, assign(socket, cards: cards, participants: participants, user_card: user_card, room: room)}
+  end
+
+  defp get_user_card(user, room) do
+    with %Participant{name: name} <- user,
+         %Card{} = card  <- Map.get(room.cards, name)
+    do
+      Card.reveal(card)
+    else
+      _err -> nil
+    end
+
   end
 
   # @impl true

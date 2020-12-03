@@ -48,11 +48,31 @@ defmodule Room do
     %{room | participants: participants, cards: cards}
   end
 
-  def reveal_cards(room) do
-    cards = Map.values(room.cards)
-      |> Enum.map(&Card.reveal/1)
+  def toggle_participant(room, name) do
+    with {:ok, participant} <- Map.fetch(room.participants, name),
+         toggled_participant <- Participant.toggle_type(participant),
+         participants <- Map.put(room.participants, name, toggled_participant),
+         cards <- update_cards(room, toggled_participant)
+    do
+      %{room | participants: participants, cards: cards}
+    else
+      err ->
+        :logger.warning("Failed to toggle participant: #{name} for room: #{inspect(room, pretty: true)}. Reason: #{inspect(err, pretty: true)}")
+        room
+    end
+  end
 
-    %{room | cards: cards}
+
+  defp update_cards(room, %Participant{name: name, type: :player}) do
+    Map.put_new(room.cards, name, %Card{owner: name})
+  end
+  defp update_cards(room, %Participant{name: name, type: :spectator}) do
+    Map.delete(room.cards, name)
+  end
+
+  def reveal_cards(room) do
+    cards = Map.new(room.cards, fn {k, v} -> {k, Card.reveal(v)} end)
+    %{room | cards: cards, state: :revealed}
   end
 
 end

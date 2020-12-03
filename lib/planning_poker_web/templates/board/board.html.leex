@@ -1,21 +1,15 @@
 <div class="flex justify-between items-center flex-col w-full">
     <div class="flex flex-wrap justify-center w-3/4">
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice", type: {:visible, :half}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice2", type: {:visible, :one}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice3", type: {:visible, :two}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice4", type: {:visible, :three}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice5", type: {:visible, :five}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice5", type: {:visible, :eight}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice5", type: {:visible, :thirteen}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice5", type: {:visible, :twenty}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Alice5", type: {:visible, :question}}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Steve", type: :empty}) %>
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "Bob", type: {:hidden, :five}}) %>
+        <%= for card <- @cards do %>
+            <%= PlanningPokerWeb.BoardView.card(card) %>
+        <% end %>
     </div>
     <div class="w-full flex">
-        <%= PlanningPokerWeb.BoardView.card(%Card{owner: "You", type: {:visible, :five}}) %>
+    <%= if @user_card do %>
+        <%= PlanningPokerWeb.BoardView.card(@user_card) %>
+        <%= if @room.state == :voting do %>
         <div class="flex w-full">
-        <div class="flex justify-center w-full space-x-1.5">
+            <div class="flex justify-center w-full space-x-1.5">
             <%= PlanningPokerWeb.BoardView.deck_card(:half) %>
             <%= PlanningPokerWeb.BoardView.deck_card(:one) %>
             <%= PlanningPokerWeb.BoardView.deck_card(:two) %>
@@ -25,8 +19,10 @@
             <%= PlanningPokerWeb.BoardView.deck_card(:thirteen) %>
             <%= PlanningPokerWeb.BoardView.deck_card(:twenty) %>
             <%= PlanningPokerWeb.BoardView.deck_card(:question) %>
+            </div>
         </div>
-        </div>
+        <% end %>
+    <% end %>
     </div>
 
 

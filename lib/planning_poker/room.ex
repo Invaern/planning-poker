@@ -46,15 +46,51 @@ defmodule PlanningPoker.Room do
   @doc """
   Removes participant `name` from room `room_id`.
 
-  New room state is broadcasted to topic `room:<room_id>` as `{:room_update, room}`
-
   Returns :ok
   """
   def leave(room_id, name) do
     room = GenServer.call(via_tuple(room_id), {:leave, name})
     :logger.debug("User #{name} left #{room_id}")
-    IO.inspect(room)
     broadcast_msg(room_id, {:room_update, room})
+  end
+
+
+  @doc """
+  Toggles participant state in given room.
+
+  When participant changes from spectator to player, then new card is added to the room.
+  When participant changes from player to spectator, then his card is removed from the room.
+  """
+  @spec toggle_participant(String.t(), String.t()) :: :ok
+  def toggle_participant(room_id, participant_name) do
+    room = GenServer.call(via_tuple(room_id), {:toggle, participant_name})
+    broadcast_room_update(room)
+  end
+
+  @doc """
+  Casts a vote.
+
+  Returns either :ok | {:error, Reason}
+  Reason is :no_cart | :voting_finished
+  """
+  def vote(room_id, participant_name, value) do
+    result = GenServer.call(via_tuple(room_id), {:vote, participant_name, value})
+    case result do
+      {:ok, room} ->
+        broadcast_room_update(room)
+        :ok
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  def reveal(room_id) do
+    room = GenServer.call(via_tuple(room_id), :reveal)
+    broadcast_room_update(room)
+  end
+
+  def new_draw(room_id) do
+    room = GenServer.call(via_tuple(room_id), :new_draw)
+    broadcast_room_update(room)
   end
 
   defp broadcast_room_update(room) do
@@ -69,7 +105,6 @@ defmodule PlanningPoker.Room do
   def start_link(options) do
     :logger.info("starting room process")
     {:ok, room_id} = Keyword.fetch(options, :room_id)
-    IO.inspect(options)
     GenServer.start_link(__MODULE__, %Room{room_id: room_id}, options)
   end
 
@@ -85,10 +120,7 @@ defmodule PlanningPoker.Room do
 
   @impl true
   def handle_call({:join, name}, {pid, _ref}, room) do
-    IO.puts("user joining")
-    IO.inspect(pid)
     monitor_ref = Process.monitor(pid)
-    IO.inspect(monitor_ref)
     join_result = Room.add_participant(room, name, monitor_ref)
     case join_result do
       {:ok, room, participant} ->
@@ -108,9 +140,27 @@ defmodule PlanningPoker.Room do
   def handle_call({:vote, owner, value}, _from, room) do
     result = Room.vote(room, owner, value)
     case result do
-      {:ok, room} -> {:reply, :ok, room, @timeout}
+      {:ok, new_room} -> {:reply, {:ok, new_room}, new_room, @timeout}
       err -> {:reply, err, room, @timeout}
     end
+  end
+
+  @impl true
+  def handle_call({:toggle, participant_name}, _from, room) do
+    new_room = Room.toggle_participant(room, participant_name)
+    {:reply, new_room, new_room, @timeout}
+  end
+
+  @impl true
+  def handle_call(:reveal, _from, room) do
+    new_room = Room.reveal_cards(room)
+    {:reply, new_room, new_room, @timeout}
+  end
+
+  @impl true
+  def handle_call(:new_draw, _from, room) do
+    new_room = Room.new_draw(room)
+    {:reply, new_room, new_room, @timeout}
   end
 
   @impl true

@@ -6,9 +6,6 @@ defmodule PlanningPokerWeb.ErrorHelpers do
   use Phoenix.HTML
 
   def error_tag(form, errors, field) when is_list(errors) and is_atom(field) do
-    IO.puts("rendering error tag")
-    IO.inspect(errors)
-    IO.inspect(field)
     case Keyword.fetch(errors, field) do
       {:ok, msg} -> content_tag(:span, msg, class: "text-red-500 text-xs italic", phx_feedback_for: input_id(form, field))
       :error -> html_escape("")
