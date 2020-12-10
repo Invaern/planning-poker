@@ -12,6 +12,9 @@ defmodule PlanningPokerWeb.BoardView do
     render("deck_card.html", color: color, value: value, value_atom: card_value)
   end
 
+  def cards_animation(:voting), do: "visible opacity-100"
+  def cards_animation(:revealed), do: "invisible opacity-0"
+
   defp get_color_value(:empty), do: {"text-gray-200", "?"}
   defp get_color_value({:hidden, _}), do: {"text-lime-500", "!"}
 

@@ -89,12 +89,25 @@ defmodule PlanningPokerWeb.RoomLive do
 
   @impl true
   def handle_info({:room_update, room}, socket) do
-    IO.puts("Room update arrived")
-    IO.inspect(room)
-    cards = Map.values(room.cards)
+    cards = case room.state do
+      :revealed -> room.cards |> Map.values() |> Card.sort_cards()
+      :voting -> room.cards |> Map.values()
+    end
+
     user_card = get_user_card(socket.assigns.user, room)
+    user = user_update(socket.assigns.user, room)
     participants = Map.values(room.participants)
-    {:noreply, assign(socket, cards: cards, participants: participants, user_card: user_card, room: room)}
+    {:noreply, assign(socket, cards: cards, participants: participants, user_card: user_card, room: room, user: user)}
+  end
+
+  defp user_update(user, room) do
+    with %Participant{name: name} <- user,
+         user <- Map.get(room.participants, name)
+    do
+      user
+    else
+      _err -> nil
+    end
   end
 
   defp get_user_card(user, room) do

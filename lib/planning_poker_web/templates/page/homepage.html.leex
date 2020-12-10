@@ -1,13 +1,19 @@
-<div class="container flex justify-center items-center   flex-col mx-auto bg-white shadow rounded p-4">
-<h1>Planning Poker</h1>
-<div>
-    <%= f = form_for :join, "#", [phx_submit: :save, phx_change: :validate, class: "flex flex-col"]  %>
-    <div class="flex border-b border-blue-500 py-1">
-        <%= text_input f, :room_id, placeholder: "Room", value: "", class: "appearance-none   w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"  %>
-        <%= submit "enter", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+<div class="container mx-auto flex bg-gray-50 shadow rounded p-4 min-h-3/4-screen">
+<div class="flex flex-col  flex-grow items-center">
+    <div class="flex justify-center text-4xl font-bold">
+        <h1>Planning Poker</h1>
     </div>
-        <%= error_tag f, @errors, :room_id %>
-    </form>
+
+    <div class="flex flex-col justify-center items-center h-1/2 w-full">
+    <span class="text-gray-500 leading-loose font-light pb-8">Choose a room to join</span>
+        <%= f = form_for :join, "#", [phx_submit: :save, phx_change: :validate, class: "flex flex-col w-1/3"]  %>
+        <div class="flex border-b border-blue-500 py-1">
+            <%= text_input f, :room_id, placeholder: "Room", value: "", class: "appearance-none w-full py-2 px-3 bg-gray-50 text-gray-700 leading-tight focus:outline-none"  %>
+            <%= submit "enter", class: "transition-colors bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+        </div>
+            <%= error_tag f, @errors, :room_id %>
+        </form>
+    </div>
 </div>
 
 </div>

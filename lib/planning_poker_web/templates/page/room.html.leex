@@ -3,13 +3,13 @@
         <%= if @user do %>
             <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
         <% else %>
-        <%= live_component @socket, PlanningPokerWeb.RoomLive.UserFormComponent, id: @room_id, room_id: @room_id, trigger_submit: false, errors: [] %>
+                <%= live_component @socket, PlanningPokerWeb.RoomLive.UserFormComponent, id: @room_id, room_id: @room_id, trigger_submit: false, errors: [] %>
         <% end %>
     </div>
     <div class="w-80 p-4 flex flex-col bg-white">
         <div class="flex-grow">
             <%= for participant <- @participants do %>
-                <%= render(PlanningPokerWeb.BoardView, "participant.html", participant: participant) %>
+                <%= render(PlanningPokerWeb.BoardView, "participant.html", participant: participant, current: (@user == participant)) %>
             <% end %>
         </div>
         <%= if @user do %>

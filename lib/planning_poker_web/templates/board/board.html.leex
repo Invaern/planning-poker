@@ -7,9 +7,8 @@
     <div class="w-full flex">
     <%= if @user_card do %>
         <%= PlanningPokerWeb.BoardView.card(@user_card) %>
-        <%= if @room.state == :voting do %>
         <div class="flex w-full">
-            <div class="flex justify-center w-full space-x-1.5">
+            <div class="flex justify-center w-full space-x-1.5 transition-all duration-500 <%= cards_animation(@room.state) %>">
             <%= PlanningPokerWeb.BoardView.deck_card(:half) %>
             <%= PlanningPokerWeb.BoardView.deck_card(:one) %>
             <%= PlanningPokerWeb.BoardView.deck_card(:two) %>
@@ -21,7 +20,6 @@
             <%= PlanningPokerWeb.BoardView.deck_card(:question) %>
             </div>
         </div>
-        <% end %>
     <% end %>
     </div>
 

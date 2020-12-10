@@ -29,4 +29,11 @@ defmodule RoomTest do
     assert new_room == room
   end
 
+  test "non empty card remains after player is removed" do
+    {:ok, room, p} = Room.create("test") |> Room.add_participant("Bob", nil)
+    {:ok, room } = Room.vote(room, p.name, :two)
+    room = Room.remove_participant(room, p.name)
+    assert true == Map.has_key?(room.cards, p.name)
+  end
+
 end

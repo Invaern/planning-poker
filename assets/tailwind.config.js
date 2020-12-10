@@ -13,6 +13,20 @@ module.exports = {
         green: colors.green,
         lightBlue: colors.lightBlue,
       },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out both',
+        'fade-out': 'fadeOut 0.5s ease-in-out both'
+      },
+      keyframes: {
+        'fadeIn': {
+          '0%': {opacity: 0, visibility: 'hidden'},
+          '100%': {opacity: 1, visibility: 'visible'},
+        },
+        'fadeOut': {
+          '0%': {opacity: 1, visibility: 'visible'},
+          '100%': {opacity: 0, visibility: 'hidden'},
+        }
+      },
       minHeight: {
         '3/4-screen': '75vh'
       }

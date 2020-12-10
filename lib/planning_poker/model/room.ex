@@ -15,11 +15,11 @@ defmodule Room do
 
   def vote(%Room{state: :revealed}, _owner, _value), do: {:error, :voting_finished}
 
-  def vote(room, owner, value) do
-    card = Map.get(room.cards, owner)
+  def vote(room, owner_name, value) do
+    card = Map.get(room.cards, owner_name)
     if card do
       card = card |> Card.set_value(value)
-      cards = Map.put(room.cards, owner, card)
+      cards = Map.put(room.cards, owner_name, card)
       {:ok, %{room | cards: cards}}
     else
       {:error, :no_card}
