@@ -1,12 +1,24 @@
-<div class="container mx-auto bg-gray-50 shadow rounded flex min-h-3/4-screen">
-    <div class="flex-1 p-4 flex  shadow z-10">
-        <%= if @user do %>
-            <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
-        <% else %>
-                <%= live_component @socket, PlanningPokerWeb.RoomLive.UserFormComponent, id: @room_id, room_id: @room_id, trigger_submit: false, errors: [] %>
-        <% end %>
+<div class="container mx-auto bg-gray-50 shadow rounded flex min-h-3/4-screen relative overflow-hidden">
+    <div class="flex-1 p-4 shadow flex absolute w-full h-full">
+            <%= if @user do %>
+                <div class="flex flex-1">
+                <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
+                </div>
+                <div class="w-80"></div>
+
+            <% else %>
+                <div class="flex flex-col w-full">
+                    <div class="flex justify-center text-4xl font-bold">
+                        <h1>Your room</h1>
+                    </div>
+                    <div class="flex flex-col justify-center items-center h-1/2 w-full">
+                        <span class="text-gray-500 leading-loose font-light pb-8">Choose a name</span>
+                        <%= live_component @socket, PlanningPokerWeb.RoomLive.UserFormComponent, id: @room_id, room_id: @room_id, trigger_submit: false, errors: [] %>
+                    </div>
+                </div>
+            <% end %>
     </div>
-    <div class="w-80 p-4 flex flex-col bg-white">
+    <div class="absolute right-0 h-full animate-open-participants w-80 p-4 flex flex-col bg-white shadow-md">
         <div class="flex-grow">
             <%= for participant <- @participants do %>
                 <%= render(PlanningPokerWeb.BoardView, "participant.html", participant: participant, current: (@user == participant)) %>
