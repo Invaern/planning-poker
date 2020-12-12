@@ -1,9 +1,0 @@
-<div>
-    <%= f = form_for :join, Routes.session_path(PlanningPokerWeb.Endpoint, :sign_in), [phx_submit: :save, phx_change: :validate, phx_trigger_action: @trigger_submit, class: "flex flex-col"]  %>
-    <div class="flex border-b border-blue-500 py-1">
-        <%= text_input f, :user_name, placeholder: "Name", value: "", class: "appearance-none   w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"  %>
-        <%= submit "enter", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
-    </div>
-        <%= error_tag f, @errors, :user_name %>
-    </form>
-</div>

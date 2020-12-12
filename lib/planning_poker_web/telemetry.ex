@@ -30,6 +30,7 @@ defmodule PlanningPokerWeb.Telemetry do
         unit: {:native, :millisecond}
       ),
 
+      last_value("planning_poker.rooms_count.total"),
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),
@@ -42,7 +43,7 @@ defmodule PlanningPokerWeb.Telemetry do
     [
       # A module, function and arguments to be invoked periodically.
       # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {PlanningPokerWeb, :count_users, []}
+      {PlanningPoker, :count_rooms, []}
     ]
   end
 end
