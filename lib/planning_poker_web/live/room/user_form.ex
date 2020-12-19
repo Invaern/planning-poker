@@ -22,9 +22,6 @@ defmodule PlanningPokerWeb.RoomLive.UserFormComponent do
 
   @impl true
   def handle_event("save", %{"join" => %{"user_name" => user_name, "room_id" => room_id}}, socket) do
-    IO.puts("user form submit")
-    # IO.inspect(payload)
-
     if is_username_valid(user_name) do
       case PlanningPoker.Room.add_participant(room_id, user_name) do
         {:ok, particpant} ->

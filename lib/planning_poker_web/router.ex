@@ -14,6 +14,16 @@ defmodule PlanningPokerWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :protected do
+   plug :basic_auth
+  end
+
+  defp basic_auth(conn, _opts) do
+    username = System.fetch_env!("AUTH_USERNAME")
+    password = System.fetch_env!("AUTH_PASSWORD")
+    Plug.BasicAuth.basic_auth(conn, username: username, password: password)
+  end
+
   scope "/", PlanningPokerWeb do
     pipe_through :browser
 
@@ -38,6 +48,15 @@ defmodule PlanningPokerWeb.Router do
 
     scope "/" do
       pipe_through :browser
+      live_dashboard "/dashboard", metrics: PlanningPokerWeb.Telemetry
+    end
+  end
+
+  if Mix.env() in [:prod] do
+    import Phoenix.LiveDashboard.Router
+
+    scope "/" do
+      pipe_through [:browser, :protected]
       live_dashboard "/dashboard", metrics: PlanningPokerWeb.Telemetry
     end
   end

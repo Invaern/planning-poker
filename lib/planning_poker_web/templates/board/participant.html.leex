@@ -4,9 +4,9 @@
             <div class="w-5 h-5 text-blue-500 fill-current transition transform hover:scale-150">
                 <%= render(PlanningPokerWeb.IconView, "icon_player.html") %>
             </div>
-            <span class="text-lg"><%= @participant.name %></span>
+            <span class="text-lg w-full"><%= @participant.name %></span>
             <%= if @current do %>
-            <div class="flex justify-end w-full">
+            <div class="flex justify-end">
                 <button class="flex items-center justify-center text-sm
                         border border-gray-300 text-gray-300
                         hover:text-gray-700 hover:border-gray-700
@@ -23,7 +23,7 @@
             </div>
             <span class="text-lg"><%= @participant.name %></span>
             <%= if @current do %>
-            <div class="flex justify-end w-full">
+            <div class="flex justify-end">
                 <button class="flex items-center justify-center text-sm
                         border border-blue-500 text-blue-500
                         hover:text-white hover:bg-blue-500

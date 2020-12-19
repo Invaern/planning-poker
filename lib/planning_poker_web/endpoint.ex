@@ -10,10 +10,6 @@ defmodule PlanningPokerWeb.Endpoint do
     signing_salt: "btRtUs35"
   ]
 
-  socket "/socket", PlanningPokerWeb.UserSocket,
-    websocket: true,
-    longpoll: false
-
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
@@ -23,7 +19,7 @@ defmodule PlanningPokerWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :planning_poker,
-    gzip: false,
+    gzip: true,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the

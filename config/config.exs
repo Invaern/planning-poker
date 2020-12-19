@@ -23,6 +23,12 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+
+# Configures timeouts. Time is given in minutes
+config :planning_poker,
+  room_ttl: String.to_integer(System.get_env("ROOM_TTL") || "1"),
+  room_join_timeout: String.to_integer(System.get_env("ROOM_JOIN_TIMEOUT") || "2")
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

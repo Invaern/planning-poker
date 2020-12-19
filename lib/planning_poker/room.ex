@@ -1,7 +1,8 @@
 defmodule PlanningPoker.Room do
   use GenServer, restart: :transient
 
-  @timeout 3_600_000
+  @timeout Application.fetch_env!(:planning_poker, :room_ttl) * 60 * 1_000
+  @join_timeout Application.fetch_env!(:planning_poker, :room_join_timeout) * 60 * 1_000
 
   defp via_tuple(room_id) do
     {:via, Registry, {PlanningPoker.RoomRegistry, room_id}}
@@ -21,10 +22,10 @@ defmodule PlanningPoker.Room do
 
   Room is retreived from associated `PlanningPoker.Room` process.
   If such process does not exist, it is started first.
-  It is possible for this function to fail if spawning process fails.
   """
   def get_room(room_id) do
     :ok = start(room_id)
+    GenServer.cast(via_tuple(room_id), :check_state)
     GenServer.call(via_tuple(room_id), :room)
   end
 
@@ -103,7 +104,6 @@ defmodule PlanningPoker.Room do
 
 
   def start_link(options) do
-    :logger.info("starting room process")
     {:ok, room_id} = Keyword.fetch(options, :room_id)
     GenServer.start_link(__MODULE__, %Room{room_id: room_id}, options)
   end
@@ -164,8 +164,24 @@ defmodule PlanningPoker.Room do
   end
 
   @impl true
+  def handle_cast(:check_state, room) do
+    if(!is_room_active?(room)) do
+      Process.send_after(self(), :check_state, @join_timeout)
+    end
+    {:noreply, room}
+  end
+
+  @impl true
+  def handle_info(:check_state, room) do
+    if(!is_room_active?(room)) do
+      Process.send(self(), :timeout, [])
+    end
+    {:noreply, room}
+  end
+
+  @impl true
   def handle_info(:timeout, room) do
-    :logger.info("Timeout reached, closing room")
+    :logger.info("Timeout reached, closing room #{room.room_id}")
     {:stop, :normal, room}
   end
 
@@ -174,10 +190,18 @@ defmodule PlanningPoker.Room do
     user_to_remove = Map.values(room.participants)
       |> Enum.find_value(&(ref == &1.monitor_ref && &1.name))
 
-    :logger.warning("User process died. User: #{user_to_remove}")
     new_room = Room.remove_participant(room, user_to_remove)
     broadcast_room_update(new_room)
+    :logger.debug("process connected to room #{room.room_id} died")
+    if (!is_room_active?(new_room)) do
+      :logger.info("Room #{room.room_id} became empty, closing process")
+      {:stop, :normal, new_room}
+    else
+      {:noreply, new_room}
+    end
+  end
 
-    {:noreply, new_room}
+  defp is_room_active?(room) do
+    Enum.count(room.participants) > 0 || Enum.count(room.cards) > 0
   end
 end

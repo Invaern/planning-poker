@@ -1,7 +1,10 @@
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-  purge: [],
+  purge: [
+    './css/**/*.scss',
+    '../lib/planning_poker_web/**/*',
+],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {

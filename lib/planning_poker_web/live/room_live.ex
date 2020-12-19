@@ -80,7 +80,6 @@ defmodule PlanningPokerWeb.RoomLive do
 
   @impl true
   def handle_info({:joined, user}, socket) do
-    IO.puts("user joined, #{inspect(user)}")
     user_card = get_user_card(user, socket.assigns.room)
 
     {:noreply, assign(socket, user: user, user_card: user_card)}
@@ -120,14 +119,5 @@ defmodule PlanningPokerWeb.RoomLive do
     end
 
   end
-
-  # @impl true
-  # def terminate(_reason, socket) do
-  #   user_name = socket.assigns.user_name
-  #   room_id = socket.assigns.room_id
-  #   if user_name do
-  #     :ok = PlanningPoker.Room.leave(room_id, user_name)
-  #   end
-  # end
 
 end
