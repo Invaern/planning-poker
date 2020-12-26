@@ -57,7 +57,11 @@ defmodule PlanningPokerWeb.RoomLive do
       "twenty" -> :twenty
       "question" -> :question
     end
-    :ok = PlanningPoker.Room.vote(socket.assigns.room_id, socket.assigns.user.name, value_atom)
+    case PlanningPoker.Room.vote(socket.assigns.room_id, socket.assigns.user.name, value_atom) do
+      :ok -> nil
+      {:error, :voting_finished } -> :logger.warning("Attempt to vote when voting has finished")
+    end
+
     {:noreply, socket}
   end
 

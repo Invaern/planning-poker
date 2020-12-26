@@ -72,7 +72,7 @@ defmodule PlanningPoker.Room do
   Casts a vote.
 
   Returns either :ok | {:error, Reason}
-  Reason is :no_cart | :voting_finished
+  Reason is :no_card | :voting_finished
   """
   def vote(room_id, participant_name, value) do
     result = GenServer.call(via_tuple(room_id), {:vote, participant_name, value})
