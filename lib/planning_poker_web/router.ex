@@ -60,4 +60,9 @@ defmodule PlanningPokerWeb.Router do
       live_dashboard "/dashboard", metrics: PlanningPokerWeb.Telemetry
     end
   end
+
+  scope "/", PlanningPokerWeb do
+    pipe_through :browser
+    get "/*other", RedirectController, :redirect_home
+  end
 end

@@ -3,9 +3,6 @@
 @import "tailwindcss/utilities";
 
 @import "../node_modules/nprogress/nprogress.css";
-@import "./card.scss";
-
-
 
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
@@ -18,9 +15,6 @@
   transition: opacity 1s ease-out;
 }
 
-.phx-disconnected{
-  cursor: wait;
-}
 .phx-disconnected *{
   pointer-events: none;
 }

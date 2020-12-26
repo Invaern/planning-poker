@@ -17,6 +17,7 @@ defmodule PlanningPokerWeb.RoomLive do
       |> assign(trigger_submit: false)
       |> assign(errors: [])
       |> assign_room(room)
+      |> assign(page_title: "PlanningPoker - #{room.room_id}")
 
     {:ok, p_socket}
   end

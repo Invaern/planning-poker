@@ -1,7 +1,7 @@
 <div class="flex items-center space-x-2">
     <%= case @participant.type do %>
         <% :player ->  %>
-            <div class="w-5 h-5 text-blue-500 fill-current transition transform hover:scale-150">
+            <div class="text-blue-500 fill-current stroke-current transition transform hover:scale-150">
                 <%= render(PlanningPokerWeb.IconView, "icon_player.html") %>
             </div>
             <span class="text-lg w-full"><%= @participant.name %></span>
@@ -17,11 +17,11 @@
             </div>
             <% end %>
         <% :spectator -> %>
-            <div class="text-gray-600 transition transform hover:scale-150"
+            <div class="text-gray-600 fill-current stroke-current transition transform hover:scale-150"
                  phx-click="toggle_participant" phx-value-ref="<%= @participant.name %>">
                 <%= render(PlanningPokerWeb.IconView, "icon_eye.html") %>
             </div>
-            <span class="text-lg"><%= @participant.name %></span>
+            <span class="text-lg w-full"><%= @participant.name %></span>
             <%= if @current do %>
             <div class="flex justify-end">
                 <button class="flex items-center justify-center text-sm

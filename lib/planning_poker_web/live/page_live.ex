@@ -21,7 +21,6 @@ defmodule PlanningPokerWeb.PageLive do
 
   end
 
-
   defp is_room_valid(room_id) do
     room_id
     |> String.trim()

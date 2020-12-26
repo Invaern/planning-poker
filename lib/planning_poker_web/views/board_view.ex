@@ -27,8 +27,8 @@ defmodule PlanningPokerWeb.BoardView do
       :three -> {"text-lime-500", "3"}
       :five -> {"text-yellow-400", "5"}
       :eight -> {"text-orange-500", "8"}
-      :thirteen -> {"text-red-600", "20"}
-      :twenty -> {"text-orange-800", "13"}
+      :thirteen -> {"text-red-600", "13"}
+      :twenty -> {"text-orange-800", "20"}
       :question -> {"text-purple-800", "?"}
     end
   end
