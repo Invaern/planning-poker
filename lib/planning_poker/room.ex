@@ -168,7 +168,7 @@ defmodule PlanningPoker.Room do
     if(!is_room_active?(room)) do
       Process.send_after(self(), :check_state, @join_timeout)
     end
-    {:noreply, room}
+    {:noreply, room, @timeout}
   end
 
   @impl true
@@ -176,7 +176,7 @@ defmodule PlanningPoker.Room do
     if(!is_room_active?(room)) do
       Process.send(self(), :timeout, [])
     end
-    {:noreply, room}
+    {:noreply, room, @timeout}
   end
 
   @impl true
@@ -197,7 +197,7 @@ defmodule PlanningPoker.Room do
       :logger.info("Room #{room.room_id} became empty, closing process")
       {:stop, :normal, new_room}
     else
-      {:noreply, new_room}
+      {:noreply, new_room, @timeout}
     end
   end
 
