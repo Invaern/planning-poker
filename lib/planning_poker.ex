@@ -9,13 +9,10 @@ defmodule PlanningPoker do
 
   def count_rooms() do
     try do
-      Registry.count(PlanningPoker.RoomRegistry)
+      count = Registry.count(PlanningPoker.RoomRegistry)
+      :telemetry.execute([:planning_poker, :rooms_count], %{total: count}, %{})
     rescue
-      _ ->
-        :logger.warning("RoomRegistry not available for telemetry")
-    else
-      count ->
-        :telemetry.execute([:planning_poker, :rooms_count], %{total: count}, %{})
+      _ -> :logger.warning("RoomRegistry not available for telemetry")
     end
 
   end

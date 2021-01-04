@@ -11,7 +11,9 @@ defmodule PlanningPoker.Room do
   defp start(room_id) do
     result = DynamicSupervisor.start_child(PlanningPoker.RoomSupervisor, {PlanningPoker.Room, room_id: room_id, name: via_tuple(room_id)})
     case result do
-     {:ok, _pid}  -> :ok
+     {:ok, _pid}  ->
+      GenServer.cast(via_tuple(room_id), :check_state)
+      :ok
      {:error, {:already_started, _pid}} -> :ok
      err -> err
     end
@@ -25,7 +27,6 @@ defmodule PlanningPoker.Room do
   """
   def get_room(room_id) do
     :ok = start(room_id)
-    GenServer.cast(via_tuple(room_id), :check_state)
     GenServer.call(via_tuple(room_id), :room)
   end
 
@@ -165,6 +166,7 @@ defmodule PlanningPoker.Room do
 
   @impl true
   def handle_cast(:check_state, room) do
+    IO.puts("Checking state: #{room.room_id}")
     if(!is_room_active?(room)) do
       Process.send_after(self(), :check_state, @join_timeout)
     end
