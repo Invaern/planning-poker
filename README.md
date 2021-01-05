@@ -2,7 +2,7 @@
 
 Simple [Planning Poker](https://en.wikipedia.org/wiki/Planning_poker) web app written in Elixir, using Phoenix Live View and Tailwind CSS.
 
-You can try it locally with Docker: `docker run --rm -p 4000:4000 invaern/planning-poker`
+You can try it locally with Docker: `docker run --rm -p 4000:4000 invaern/planning-poker` and then visit [`localhost:4000`](http://localhost:4000)
 
 To see configuration options of provided image see https://hub.docker.com/r/invaern/planning-poker
 
