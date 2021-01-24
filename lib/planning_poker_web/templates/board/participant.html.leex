@@ -4,7 +4,7 @@
             <div class="text-blue-500 fill-current stroke-current transition transform hover:scale-150">
                 <%= render(PlanningPokerWeb.IconView, "icon_player.html") %>
             </div>
-            <span class="text-lg w-full"><%= @participant.name %></span>
+            <span class="text-lg w-full truncate"><%= @participant.name %></span>
             <%= if @current do %>
             <div class="flex justify-end">
                 <button class="flex items-center justify-center text-sm
@@ -21,7 +21,7 @@
                  phx-click="toggle_participant" phx-value-ref="<%= @participant.name %>">
                 <%= render(PlanningPokerWeb.IconView, "icon_eye.html") %>
             </div>
-            <span class="text-lg w-full"><%= @participant.name %></span>
+            <span class="text-lg w-full truncate"><%= @participant.name %></span>
             <%= if @current do %>
             <div class="flex justify-end">
                 <button class="flex items-center justify-center text-sm

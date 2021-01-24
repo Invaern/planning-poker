@@ -8,9 +8,10 @@ defmodule PlanningPokerWeb.RoomLive do
 
   @impl true
   def mount(%{"id" => room_id} = _params,  _session, socket) do
-    room = PlanningPoker.Room.get_room(room_id)
-    :ok = Phoenix.PubSub.subscribe(PlanningPoker.PubSub, "room:" <> room_id)
-
+    with {:ok, valid_room_id} <- PlanningPoker.Validation.validate_string(room_id, max_len: Room.max_id_len()),
+         room <- PlanningPoker.Room.get_room(valid_room_id),
+         :ok <- Phoenix.PubSub.subscribe(PlanningPoker.PubSub, "room:" <> room.room_id)
+    do
     p_socket = socket
       |> assign(user_card: nil)
       |> assign(user: nil)
@@ -18,8 +19,12 @@ defmodule PlanningPokerWeb.RoomLive do
       |> assign(errors: [])
       |> assign_room(room)
       |> assign(page_title: "PlanningPoker - #{room.room_id}")
-
     {:ok, p_socket}
+    else
+      err ->
+        :logger.warning("Failed to open a room: #{inspect(err)}")
+        {:ok, push_redirect(socket, to: "/")}
+    end
   end
 
   defp assign_room(socket, room) do

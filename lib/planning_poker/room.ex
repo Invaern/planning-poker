@@ -106,7 +106,7 @@ defmodule PlanningPoker.Room do
 
   def start_link(options) do
     {:ok, room_id} = Keyword.fetch(options, :room_id)
-    GenServer.start_link(__MODULE__, %Room{room_id: room_id}, options)
+    GenServer.start_link(__MODULE__, Room.create(room_id), options)
   end
 
   @impl true

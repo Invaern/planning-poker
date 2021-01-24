@@ -36,4 +36,16 @@ defmodule RoomTest do
     assert true == Map.has_key?(room.cards, p.name)
   end
 
+  test "can't create too long room_id" do
+    long_id = String.pad_leading("", Room.max_id_len() + 1, ["x"])
+    assert_raise ArgumentError, fn -> Room.create(long_id) end
+  end
+
+  test "can't create room with blank id" do
+    assert_raise ArgumentError, fn -> Room.create("  ") end
+  end
+
+  test "can't create room with non string id" do
+    assert_raise ArgumentError, fn -> Room.create(42) end
+  end
 end

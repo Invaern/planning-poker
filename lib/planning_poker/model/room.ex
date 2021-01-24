@@ -2,8 +2,16 @@ defmodule Room do
   @enforce_keys [:room_id]
   defstruct [:room_id, state: :voting, cards: %{}, participants: %{}]
 
+  @max_id_len 30
 
-  def create(id), do: %Room{room_id: id}
+  def create(id) when is_binary(id) do
+    trimmed = String.trim(id)
+    if (String.length(trimmed) > @max_id_len), do: raise ArgumentError, message: "Maximum length for room_id exceeded"
+    if (String.length(trimmed) == 0), do: raise ArgumentError, message: "Room id can't be blank"
+    %Room{room_id: trimmed}
+  end
+
+  def create(_), do: raise ArgumentError, message: "ID must be a string"
 
   def new_draw(room) do
     cards = for %Participant{type: :player, name: owner} <- Map.values(room.participants),
@@ -75,4 +83,5 @@ defmodule Room do
     %{room | cards: cards, state: :revealed}
   end
 
+  def max_id_len(), do: @max_id_len
 end
