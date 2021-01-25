@@ -2,6 +2,8 @@ defmodule Participant do
   @enforce_keys [:name, :monitor_ref]
   defstruct [:name, :monitor_ref, type: :player]
 
+  @max_name_len 15
+
   @doc """
   Toggles type :player <-> :spectator
 
@@ -24,5 +26,7 @@ defmodule Participant do
   def toggle_type(%Participant{type: :spectator} = participant) do
     %{participant | type: :player}
   end
+
+  def max_name_len(), do: @max_name_len
 
 end

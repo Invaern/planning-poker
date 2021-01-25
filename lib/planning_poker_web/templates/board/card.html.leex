@@ -3,6 +3,6 @@
     <%= content_tag(:span, @value, class: Enum.join(["transition","duration-200","font-medium", "text-7xl", "tracking-tight", @color], " ")) %>
     </div>
     <div class="flex justify-center items-center h-8 bg-gray-100">
-        <div class="truncate"><%= @owner %></div>
+        <div title="<%= @owner %>" class="truncate"><%= @owner %></div>
     </div>
 </div>

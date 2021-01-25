@@ -5,13 +5,13 @@ defmodule Room do
   @max_id_len 30
 
   def create(id) when is_binary(id) do
-    trimmed = String.trim(id)
-    if (String.length(trimmed) > @max_id_len), do: raise ArgumentError, message: "Maximum length for room_id exceeded"
-    if (String.length(trimmed) == 0), do: raise ArgumentError, message: "Room id can't be blank"
-    %Room{room_id: trimmed}
+    with {:ok, valid_room_id} <- PlanningPoker.Validation.validate_string(id, max_len: @max_id_len)
+    do
+      {:ok, %Room{room_id: valid_room_id}}
+    end
   end
 
-  def create(_), do: raise ArgumentError, message: "ID must be a string"
+  def create(_), do: {:error, :invalid_type}
 
   def new_draw(room) do
     cards = for %Participant{type: :player, name: owner} <- Map.values(room.participants),

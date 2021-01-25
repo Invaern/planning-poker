@@ -15,6 +15,7 @@ defmodule PlanningPoker.Room do
       GenServer.cast(via_tuple(room_id), :check_state)
       :ok
      {:error, {:already_started, _pid}} -> :ok
+     {:error, {{:badmatch, err }, _trace}} -> err
      err -> err
     end
   end
@@ -26,8 +27,7 @@ defmodule PlanningPoker.Room do
   If such process does not exist, it is started first.
   """
   def get_room(room_id) do
-    :ok = start(room_id)
-    GenServer.call(via_tuple(room_id), :room)
+    with :ok <- start(room_id), do: GenServer.call(via_tuple(room_id), :room)
   end
 
   @doc """
@@ -37,11 +37,11 @@ defmodule PlanningPoker.Room do
   Returns {:ok, participant} | {:error, reason}
   """
   def add_participant(room_id, name) do
-    case GenServer.call(via_tuple(room_id), {:join, name}) do
-      {:ok, room, participant} ->
-        broadcast_room_update(room)
-        {:ok, participant}
-      {:error, err} -> {:error, err}
+    with {:ok, valid_user_name} <- PlanningPoker.Validation.validate_string(name, max_len: Participant.max_name_len()),
+         {:ok, room, participant} <- GenServer.call(via_tuple(room_id), {:join, valid_user_name})
+    do
+      broadcast_room_update(room)
+      {:ok, participant}
     end
   end
 
@@ -106,7 +106,8 @@ defmodule PlanningPoker.Room do
 
   def start_link(options) do
     {:ok, room_id} = Keyword.fetch(options, :room_id)
-    GenServer.start_link(__MODULE__, Room.create(room_id), options)
+    {:ok, room} = Room.create(room_id)
+    GenServer.start_link(__MODULE__, room, options)
   end
 
   @impl true
@@ -116,7 +117,7 @@ defmodule PlanningPoker.Room do
 
   @impl true
   def handle_call(:room, _from, room) do
-    {:reply, room, room, @timeout}
+    {:reply, {:ok, room}, room, @timeout}
   end
 
   @impl true
@@ -125,7 +126,7 @@ defmodule PlanningPoker.Room do
     join_result = Room.add_participant(room, name, monitor_ref)
     case join_result do
       {:ok, room, participant} ->
-        :logger.info("User #{name} joined")
+        :logger.debug("User #{name} joined #{room.room_id}")
         {:reply, {:ok, room, participant} , room, @timeout}
       err -> {:reply, err, room, @timeout}
     end
@@ -134,6 +135,7 @@ defmodule PlanningPoker.Room do
   @impl true
   def handle_call({:leave, name}, _from, room) do
     room = Room.remove_participant(room, name)
+    GenServer.cast(via_tuple(room.room_id), :check_state)
     {:reply, room, room, @timeout}
   end
 
@@ -166,7 +168,6 @@ defmodule PlanningPoker.Room do
 
   @impl true
   def handle_cast(:check_state, room) do
-    IO.puts("Checking state: #{room.room_id}")
     if(!is_room_active?(room)) do
       Process.send_after(self(), :check_state, @join_timeout)
     end

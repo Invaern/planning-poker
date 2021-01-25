@@ -8,6 +8,7 @@ defmodule PlanningPokerWeb.Router do
     plug :put_root_layout, {PlanningPokerWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :cookies_to_session
   end
 
   pipeline :api do
@@ -22,6 +23,11 @@ defmodule PlanningPokerWeb.Router do
     username = System.fetch_env!("AUTH_USERNAME")
     password = System.fetch_env!("AUTH_PASSWORD")
     Plug.BasicAuth.basic_auth(conn, username: username, password: password)
+  end
+
+  defp cookies_to_session(conn, _opts) do
+    user_name = Map.get(conn.cookies, "user_name")
+    conn |> put_session(:user_name, user_name)
   end
 
   scope "/", PlanningPokerWeb do

@@ -1,7 +1,7 @@
 defmodule PlanningPokerWeb.RoomLive.UserFormComponent do
   use PlanningPokerWeb, :live_component
 
-  @max_name_length 15
+  @max_name_length Participant.max_name_len()
 
   @impl true
   def render(assigns) do
@@ -29,8 +29,7 @@ defmodule PlanningPokerWeb.RoomLive.UserFormComponent do
 
   @impl true
   def handle_event("save", %{"join" => %{"user_name" => user_name, "room_id" => room_id}}, socket) do
-    with {:ok, valid_name} <- PlanningPoker.Validation.validate_string(user_name, max_len: @max_name_length),
-         {:ok, participant} <- PlanningPoker.Room.add_participant(room_id, valid_name)
+    with {:ok, participant} <- PlanningPoker.Room.add_participant(room_id, user_name)
     do
       send(self(), {:joined, participant})
       {:noreply, assign(socket, errors: [], user_input: "")}

@@ -7,23 +7,27 @@ defmodule PlanningPokerWeb.RoomLive do
   end
 
   @impl true
-  def mount(%{"id" => room_id} = _params,  _session, socket) do
-    with {:ok, valid_room_id} <- PlanningPoker.Validation.validate_string(room_id, max_len: Room.max_id_len()),
-         room <- PlanningPoker.Room.get_room(valid_room_id),
-         :ok <- Phoenix.PubSub.subscribe(PlanningPoker.PubSub, "room:" <> room.room_id)
+  def mount(%{"id" => room_id} = _params, %{"user_name" => user_name} = _session, socket) do
+    with :ok <- Phoenix.PubSub.subscribe(PlanningPoker.PubSub, "room:" <> room_id),
+         {:ok, room} <- PlanningPoker.Room.get_room(room_id),
+         user <- join_room(room, user_name)
     do
-    p_socket = socket
+    socket = socket
       |> assign(user_card: nil)
-      |> assign(user: nil)
-      |> assign(trigger_submit: false)
+      |> assign(user: user)
       |> assign(errors: [])
       |> assign_room(room)
       |> assign(page_title: "PlanningPoker - #{room.room_id}")
-    {:ok, p_socket}
+    socket =
+      case user do
+        nil -> socket
+        %Participant{name: name} -> push_event(socket, "set_username", %{user_name:  name})
+      end
+    {:ok, socket}
     else
       err ->
-        :logger.warning("Failed to open a room: #{inspect(err)}")
-        {:ok, push_redirect(socket, to: "/")}
+        :logger.error("Failed to join a room: #{room_id}, reason: #{inspect(err)}")
+        {:ok, redirect(socket, to: "/")}
     end
   end
 
@@ -35,18 +39,13 @@ defmodule PlanningPokerWeb.RoomLive do
     |> assign(participants: Map.values(room.participants))
   end
 
-
-  @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-  end
-
-  defp apply_action(socket, :log_in, _params) do
-    socket
+  defp join_room(room, user_name) do
+    with {:ok, participant} <- PlanningPoker.Room.add_participant(room.room_id, user_name)
+    do
+      participant
+    else
+      _ -> nil
+    end
   end
 
   @impl true
@@ -89,10 +88,20 @@ defmodule PlanningPokerWeb.RoomLive do
   end
 
   @impl true
+  def handle_event("log_out", _, socket) do
+    room = socket.assigns.room
+    user = socket.assigns.user
+    :ok = PlanningPoker.Room.leave(room.room_id, user.name)
+    socket = assign(socket, user: nil, user_card: nil)
+    {:noreply, push_event(socket, "clear_cookies", %{})}
+  end
+
+  @impl true
   def handle_info({:joined, user}, socket) do
     user_card = get_user_card(user, socket.assigns.room)
+    socket = assign(socket, user: user, user_card: user_card)
 
-    {:noreply, assign(socket, user: user, user_card: user_card)}
+    {:noreply, push_event(socket, "set_username", %{user_name:  user.name}) }
   end
 
 

@@ -5,6 +5,11 @@
                 <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
                 </div>
                 <div class="w-80"></div>
+                <div title="Log out"
+                     phx-click="log_out"
+                     class="absolute text-gray-400 stroke-current transition-colors hover:text-red-600">
+                <%= render(PlanningPokerWeb.IconView, "icon_logout.html") %>
+                </div>
 
             <% else %>
                 <div class="flex flex-col w-full">
