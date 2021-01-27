@@ -30,20 +30,25 @@
             <% end %>
         </div>
         <%= if @user do %>
-            <div class="flex justify-center">
+            <div class="flex">
             <%= case @room.state do %>
                 <% :voting -> %>
                 <button class="w-1/2 flex items-center justify-center
-                            bg-blue-500 hover:bg-blue-700 text-white
+                            bg-blue-500 hover:bg-blue-700 text-white focus:outline-none
                             transition-colors font-bold py-2 px-4 rounded"
                             phx-click="reveal"
                             type="submit">Reveal</button>
                 <% :revealed -> %>
                 <button class="w-1/2 flex items-center justify-center
-                            bg-green-600 hover:bg-green-700 text-white
+                            bg-green-600 hover:bg-green-700 text-white focus:outline-none
                             transition-colors font-bold py-2 px-4 rounded"
                             phx-click="new_draw"
-                            type="button">Restart</button>
+                            type="button">New</button>
+                <button class="w-1/2 flex items-center justify-center
+                            text-green-600 hover:text-green-700 focus:outline-none
+                            transition-color font-bold py-2 px-4 rounded"
+                            phx-click="reestimate"
+                            type="button">Reestimate</button>
             <% end %>
             </div>
         <% end %>

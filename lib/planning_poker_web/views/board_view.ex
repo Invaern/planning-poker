@@ -2,10 +2,14 @@ defmodule PlanningPokerWeb.BoardView do
   use PlanningPokerWeb, :view
 
 
-  def card(card) do
+  def card(card, show_prev \\ false)
+  def card(card, show_prev) do
     {color, value} = get_color_value(card.type)
     owner = card.owner
-    render("card.html", owner: owner, color: color, value: value)
+    {prev_color, prev_val} = get_prev_color_value(card)
+    render("card.html", owner: owner, color: color, value: value,
+                        show_prev: show_prev && card.prev_val,
+                        prev_val: prev_val, prev_color: prev_color)
   end
 
   def deck_card(card_value) do
@@ -32,5 +36,8 @@ defmodule PlanningPokerWeb.BoardView do
       :question -> {"text-purple-800", "?"}
     end
   end
+
+  defp get_prev_color_value(%Card{prev_val: nil}), do: get_color_value(:empty)
+  defp get_prev_color_value(%Card{prev_val: value}), do: get_color_value({:visible, value})
 
 end

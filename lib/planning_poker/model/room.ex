@@ -21,6 +21,16 @@ defmodule Room do
     %{room | state: :voting, cards: cards}
   end
 
+  def reestimate(room) do
+    cards = for %Participant{type: :player, name: owner} <- Map.values(room.participants),
+            into: %{},
+            do: {owner, %Card{owner: owner, prev_val: card_value(owner, room.cards)}}
+
+    %{room | state: :voting, cards: cards}
+  end
+
+  defp card_value(owner, cards), do: Map.get(cards, owner) |> Card.value()
+
   def vote(%Room{state: :revealed}, _owner, _value), do: {:error, :voting_finished}
 
   def vote(room, owner_name, value) do

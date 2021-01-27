@@ -1,7 +1,7 @@
 defmodule Card do
 
   @enforce_keys [:owner]
-  defstruct [:owner, type: :empty]
+  defstruct [:owner, type: :empty, prev_val: nil]
 
   @values_order [half: 0.5, one: 1, two: 2, three: 3, five: 5, eight: 8, thirteen: 13, twenty: 20, question: 100]
 
@@ -20,6 +20,10 @@ defmodule Card do
   def sort_cards(cards) do
     Enum.sort(cards, &is_smaller/2)
   end
+
+  def value(%Card{type: {:hidden, value}}), do: value
+  def value(%Card{type: {:visible, value}}), do: value
+  def value(_), do: nil
 
   defp is_smaller(_, %Card{type: :empty}), do: true
   defp is_smaller(%Card{type: :empty}, _), do: false

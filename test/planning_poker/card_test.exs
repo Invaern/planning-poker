@@ -48,4 +48,19 @@ defmodule CardTest do
     assert [c_hf, c_1, c_2, c_3, c_5, c_8, c_13, c_20, c_q, c_e] == Card.sort_cards(cards)
   end
 
+  test "value of empty card is nil" do
+    card = %Card{owner: "Bob"}
+    assert nil == Card.value(card)
+  end
+
+  test "get value of hidden card" do
+    card = %Card{owner: "Bob", type: {:hidden, :one}}
+    assert :one == Card.value(card)
+  end
+
+  test "get value of visible card" do
+    card = %Card{owner: "Bob", type: {:visible, :two}}
+    assert :two == Card.value(card)
+  end
+
 end

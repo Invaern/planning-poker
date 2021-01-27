@@ -95,6 +95,11 @@ defmodule PlanningPoker.Room do
     broadcast_room_update(room)
   end
 
+  def reestimate(room_id) do
+    room = GenServer.call(via_tuple(room_id), :reestimate)
+    broadcast_room_update(room)
+  end
+
   defp broadcast_room_update(room) do
     broadcast_msg(room.room_id, {:room_update, room})
   end
@@ -163,6 +168,12 @@ defmodule PlanningPoker.Room do
   @impl true
   def handle_call(:new_draw, _from, room) do
     new_room = Room.new_draw(room)
+    {:reply, new_room, new_room, @timeout}
+  end
+
+  @impl true
+  def handle_call(:reestimate, _from, room) do
+    new_room = Room.reestimate(room)
     {:reply, new_room, new_room, @timeout}
   end
 

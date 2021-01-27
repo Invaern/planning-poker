@@ -88,6 +88,12 @@ defmodule PlanningPokerWeb.RoomLive do
   end
 
   @impl true
+  def handle_event("reestimate", _, socket) do
+    PlanningPoker.Room.reestimate(socket.assigns.room.room_id)
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("log_out", _, socket) do
     room = socket.assigns.room
     user = socket.assigns.user

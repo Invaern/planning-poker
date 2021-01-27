@@ -1,12 +1,12 @@
 <div class="flex justify-between items-center flex-col w-full">
     <div class="flex flex-wrap justify-center w-3/4">
         <%= for card <- @cards do %>
-            <%= PlanningPokerWeb.BoardView.card(card) %>
+            <%= PlanningPokerWeb.BoardView.card(card, :revealed == @room.state) %>
         <% end %>
     </div>
     <div class="w-full flex">
     <%= if @user_card do %>
-        <%= PlanningPokerWeb.BoardView.card(@user_card) %>
+        <%= PlanningPokerWeb.BoardView.card(@user_card, true) %>
         <div class="flex w-full animate-fade-in">
             <div class="flex justify-center w-full space-x-1.5 transition-all duration-500 <%= cards_animation(@room.state) %>">
             <%= PlanningPokerWeb.BoardView.deck_card(:half) %>

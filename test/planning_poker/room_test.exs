@@ -52,4 +52,18 @@ defmodule RoomTest do
   test "can't create room with non string id" do
     assert {:error, :invalid_type} == Room.create(42)
   end
+
+  test "reestimation should copy values" do
+    {:ok, room} = Room.create("test")
+    {:ok, room, p1} = Room.add_participant(room, "Bob", nil)
+    {:ok, room, p2} = Room.add_participant(room, "Alice", nil)
+    {:ok, room} = Room.vote(room, p1.name, :one)
+    {:ok, room} = Room.vote(room, p2.name, :two)
+    room = Room.reestimate(room)
+    %Card{type: :empty, prev_val: v1} = Map.get(room.cards, p1.name)
+    %Card{type: :empty, prev_val: v2} = Map.get(room.cards, p2.name)
+
+    assert :one == v1
+    assert :two == v2
+  end
 end
