@@ -13,9 +13,25 @@ export const Hooks = {
             this.handleEvent("clear_cookies", (_) => {
                 document.cookie = `user_name=expired;path=/;max-age=0`;
             });
-            this.handleEvent("set_username", ({user_name}) => {
+            this.handleEvent("save_username", ({user_name}) => {
                 document.cookie = `user_name=${user_name};path=/;max-age=604800`;
             })
+
+        },
+        reconnected(){
+            const user = getUserName();
+            if (user) {
+                this.pushEvent('reconnect_user', user)
+            }
+
         }
     }
 };
+
+const user_name_regex = /(?:^|;)user_name=([^;]+)(?:;|$)/
+
+function getUserName() {
+    const cookie_match = document.cookie.match(user_name_regex);
+    return cookie_match ? cookie_match[1] : null;
+
+}

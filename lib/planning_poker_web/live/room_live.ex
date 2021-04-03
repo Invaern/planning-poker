@@ -21,7 +21,7 @@ defmodule PlanningPokerWeb.RoomLive do
     socket =
       case user do
         nil -> socket
-        %Participant{name: name} -> push_event(socket, "set_username", %{user_name:  name})
+        %Participant{name: name} -> push_event(socket, "save_username", %{user_name:  name})
       end
     {:ok, socket}
     else
@@ -103,11 +103,25 @@ defmodule PlanningPokerWeb.RoomLive do
   end
 
   @impl true
+  def handle_event("reconnect_user", user_name, socket) do
+    current_user = socket.assigns.user
+    if !current_user do
+      :logger.debug("reconnecting user #{user_name}")
+      room = socket.assigns.room
+      user = join_room(room, user_name)
+      {:noreply, assign(socket, user: user)}
+    else
+      :logger.debug("User already set, ignoring #{user_name}")
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
   def handle_info({:joined, user}, socket) do
     user_card = get_user_card(user, socket.assigns.room)
     socket = assign(socket, user: user, user_card: user_card)
 
-    {:noreply, push_event(socket, "set_username", %{user_name:  user.name}) }
+    {:noreply, push_event(socket, "save_username", %{user_name:  user.name}) }
   end
 
 
