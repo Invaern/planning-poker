@@ -1,10 +1,9 @@
-<div class="flex justify-between items-center flex-col w-full">
-    <div class="flex flex-wrap justify-center w-3/4">
+<div id="played_cards" class="flex flex-grow flex-wrap px-8 justify-center content-start">
         <%= for card <- @cards do %>
             <%= PlanningPokerWeb.BoardView.card(card, :revealed == @room.state) %>
         <% end %>
-    </div>
-    <div class="w-full flex">
+</div>
+ <div id="player_cards" class="w-full flex">
     <%= if @user_card do %>
         <%= PlanningPokerWeb.BoardView.card(@user_card, true) %>
         <div class="flex w-full animate-fade-in">
@@ -21,7 +20,4 @@
             </div>
         </div>
     <% end %>
-    </div>
-
-
 </div>

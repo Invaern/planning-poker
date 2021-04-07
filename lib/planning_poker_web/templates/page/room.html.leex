@@ -1,10 +1,9 @@
-<div class="container mx-auto bg-gray-50 shadow rounded flex min-h-3/4-screen relative overflow-hidden" id="room" phx-hook="CookiesHandler">
-    <div class="flex-1 p-4 shadow flex absolute w-full h-full">
+<div class="2xl:container mx-4 2xl:mx-auto bg-gray-50 shadow rounded flex min-h-3/4-screen relative overflow-hidden" id="room" phx-hook="CookiesHandler">
+    <div class="flex-1 p-4 flex overflow-hidden">
             <%= if @user do %>
-                <div class="flex flex-1">
+                <div id="board" class="flex flex-col flex-grow overflow-hidden">
                 <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
                 </div>
-                <div class="w-80"></div>
                 <div title="Log out"
                      phx-click="log_out"
                      class="absolute text-gray-400 stroke-current transition-colors hover:text-red-600">
@@ -23,8 +22,9 @@
                 </div>
             <% end %>
     </div>
-    <div class="absolute right-0 h-full animate-open-participants w-80 p-4 flex flex-col bg-white shadow-md">
-        <div class="flex-grow">
+    <div class="lg:w-1/5  lg:flex-shrink-0 hidden lg:block"></div>
+    <div id="participants_tab" class="hidden  absolute right-0 h-full overflow-hidden animate-open-participants w-1/5 p-4 lg:flex flex-col bg-white shadow-md">
+        <div class="flex-grow overflow-y-auto">
             <%= for participant <- @participants do %>
                 <%= render(PlanningPokerWeb.BoardView, "participant.html", participant: participant, current: (@user == participant)) %>
             <% end %>

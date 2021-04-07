@@ -37,6 +37,9 @@ module.exports = {
       },
       minHeight: {
         '3/4-screen': '75vh'
+      },
+      maxWidth: {
+        '24': '6rem'
       }
     },
   },
