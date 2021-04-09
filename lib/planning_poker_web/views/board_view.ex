@@ -17,6 +17,35 @@ defmodule PlanningPokerWeb.BoardView do
     render("deck_card.html", color: color, value: value, value_atom: card_value)
   end
 
+  def action_buttons(:voting) do
+    assigns = %{:__changed__ => nil}
+    ~L"""
+    <button class="w-1/2 flex items-center justify-center
+    bg-blue-500 hover:bg-blue-700 text-white focus:outline-none
+    lg:text-sm xl:text-base
+    transition-colors font-bold py-2 px-4 rounded"
+    phx-click="reveal"
+    type="submit">Reveal</button>
+    """
+  end
+  def action_buttons(:revealed) do
+    assigns = %{:__changed__ => nil}
+    ~L"""
+    <button class="w-1/2 flex items-center justify-center
+    bg-green-600 hover:bg-green-700 text-white focus:outline-none
+    lg:text-sm xl:text-base
+    transition-colors font-bold py-2 px-4 rounded"
+    phx-click="new_draw"
+    type="button">New</button>
+    <button class="w-1/2 flex items-center justify-center
+    text-green-600 hover:text-green-700 focus:outline-none
+    lg:text-sm xl:text-base
+    transition-color font-bold py-2 px-4 rounded"
+    phx-click="reestimate"
+    type="button">Reestimate</button>
+    """
+  end
+
   def cards_animation(:voting), do: "visible opacity-100"
   def cards_animation(:revealed), do: "invisible opacity-0"
 

@@ -1,15 +1,12 @@
-<div class="2xl:container mx-4 2xl:mx-auto bg-gray-50 shadow rounded flex min-h-3/4-screen relative overflow-hidden" id="room" phx-hook="CookiesHandler">
+<div class="2xl:container mx-4 2xl:mx-auto bg-gray-50 shadow rounded flex min-h-3/4-screen relative overflow-hidden"
+     id="room"
+     x-data="{paricipantsTab: false}"
+     phx-hook="CookiesHandler">
     <div class="flex-1 p-4 flex overflow-hidden">
             <%= if @user do %>
-                <div id="board" class="flex flex-col flex-grow overflow-hidden">
+                <div id="board" class="flex flex-col flex-grow overflow-hidden relative">
                 <%= render(PlanningPokerWeb.BoardView, "board.html", assigns) %>
                 </div>
-                <div title="Log out"
-                     phx-click="log_out"
-                     class="absolute text-gray-400 stroke-current transition-colors hover:text-red-600">
-                <%= render(PlanningPokerWeb.IconView, "icon_logout.html") %>
-                </div>
-
             <% else %>
                 <div class="flex flex-col w-full">
                     <div class="flex justify-center text-4xl font-bold">
@@ -24,33 +21,18 @@
     </div>
     <div class="lg:w-1/5  lg:flex-shrink-0 hidden lg:block"></div>
     <div id="participants_tab" class="hidden  absolute right-0 h-full overflow-hidden animate-open-participants w-1/5 p-4 lg:flex flex-col bg-white shadow-md">
-        <div class="flex-grow overflow-y-auto">
-            <%= for participant <- @participants do %>
-                <%= render(PlanningPokerWeb.BoardView, "participant.html", participant: participant, current: (@user == participant)) %>
-            <% end %>
-        </div>
+        <%= render(PlanningPokerWeb.ParticipantsView, "participants.html", participants: @participants, user: @user) %>
+
         <%= if @user do %>
             <div class="flex">
-            <%= case @room.state do %>
-                <% :voting -> %>
-                <button class="w-1/2 flex items-center justify-center
-                            bg-blue-500 hover:bg-blue-700 text-white focus:outline-none
-                            transition-colors font-bold py-2 px-4 rounded"
-                            phx-click="reveal"
-                            type="submit">Reveal</button>
-                <% :revealed -> %>
-                <button class="w-1/2 flex items-center justify-center
-                            bg-green-600 hover:bg-green-700 text-white focus:outline-none
-                            transition-colors font-bold py-2 px-4 rounded"
-                            phx-click="new_draw"
-                            type="button">New</button>
-                <button class="w-1/2 flex items-center justify-center
-                            text-green-600 hover:text-green-700 focus:outline-none
-                            transition-color font-bold py-2 px-4 rounded"
-                            phx-click="reestimate"
-                            type="button">Reestimate</button>
-            <% end %>
+            <%= PlanningPokerWeb.BoardView.action_buttons(@room.state) %>
             </div>
         <% end %>
+    </div>
+    <div id="mobile_participants"
+        class="absolute top-12 right-0 w-1/3 p-4 lg:hidden
+               bg-white rounded shadow max-h-4/5
+              overflow-y-auto animate-open-participants">
+        <%= render(PlanningPokerWeb.ParticipantsView, "participants.html", participants: @participants, user: @user) %>
     </div>
 </div>

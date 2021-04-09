@@ -3,6 +3,11 @@
             <%= PlanningPokerWeb.BoardView.card(card, :revealed == @room.state) %>
         <% end %>
 </div>
+<div id="action_buttons" class="hidden sm:flex justify-center lg:hidden">
+    <div id="buttons_box" class="flex w-64">
+        <%= PlanningPokerWeb.BoardView.action_buttons(@room.state) %>
+    </div>
+</div>
  <div id="player_cards" class="w-full flex">
     <%= if @user_card do %>
         <%= PlanningPokerWeb.BoardView.card(@user_card, true) %>
@@ -20,4 +25,13 @@
             </div>
         </div>
     <% end %>
+</div>
+<div title="Log out"
+     phx-click="log_out"
+     class="absolute text-gray-400 stroke-current transition-colors hover:text-red-600">
+     <%= render(PlanningPokerWeb.IconView, "icon_logout.html") %>
+</div>
+<div title="Participants"
+     class="absolute lg:hidden right-0 text-blue-300 stroke-current transition-colors hover:text-blue-500">
+     <%= render(PlanningPokerWeb.IconView, "icon_participants.html") %>
 </div>

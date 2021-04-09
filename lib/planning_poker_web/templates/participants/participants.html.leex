@@ -1,0 +1,5 @@
+<div class="flex-grow overflow-y-auto">
+    <%= for participant <- @participants do %>
+        <%= render(PlanningPokerWeb.BoardView, "participant.html", participant: participant, current: (@user == participant)) %>
+    <% end %>
+</div>
