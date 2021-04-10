@@ -1,6 +1,6 @@
 <div class="2xl:container mx-4 2xl:mx-auto bg-gray-50 shadow rounded flex min-h-3/4-screen relative overflow-hidden"
      id="room"
-     x-data="{paricipantsTab: false}"
+     x-data="{participantsTab: false}"
      phx-hook="CookiesHandler">
     <div class="flex-1 p-4 flex overflow-hidden">
             <%= if @user do %>
@@ -20,7 +20,10 @@
             <% end %>
     </div>
     <div class="lg:w-1/5  lg:flex-shrink-0 hidden lg:block"></div>
-    <div id="participants_tab" class="hidden  absolute right-0 h-full overflow-hidden animate-open-participants w-1/5 p-4 lg:flex flex-col bg-white shadow-md">
+    <div id="participants_tab"
+         class="hidden lg:flex absolute right-0 h-full overflow-hidden
+                animate-open-participants
+                w-1/5 p-4 flex-col bg-white shadow-md">
         <%= render(PlanningPokerWeb.ParticipantsView, "participants.html", participants: @participants, user: @user) %>
 
         <%= if @user do %>
@@ -30,9 +33,17 @@
         <% end %>
     </div>
     <div id="mobile_participants"
+        x-show="participantsTab"
+        x-cloak
+        x-transition:enter="transition ease-in-out duration-300"
+        x-transition:enter-start="transform translate-x-full"
+        x-transition:enter-end="transform translate-x-0"
+        x-transition:leave="transition ease-in-out duration-300"
+        x-transition:leave-start="transform translate-x-0"
+        x-transition:leave-end="transform translate-x-full"
         class="absolute top-12 right-0 w-1/3 p-4 lg:hidden
                bg-white rounded shadow max-h-4/5
-              overflow-y-auto animate-open-participants">
+              overflow-y-auto">
         <%= render(PlanningPokerWeb.ParticipantsView, "participants.html", participants: @participants, user: @user) %>
     </div>
 </div>

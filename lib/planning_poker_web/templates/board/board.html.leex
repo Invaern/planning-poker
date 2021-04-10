@@ -1,4 +1,4 @@
-<div id="played_cards" class="flex flex-grow flex-wrap px-8 justify-center content-start">
+<div id="played_cards" class="flex flex-grow flex-wrap px-10 justify-center content-start">
         <%= for card <- @cards do %>
             <%= PlanningPokerWeb.BoardView.card(card, :revealed == @room.state) %>
         <% end %>
@@ -32,6 +32,13 @@
      <%= render(PlanningPokerWeb.IconView, "icon_logout.html") %>
 </div>
 <div title="Participants"
-     class="absolute lg:hidden right-0 text-blue-300 stroke-current transition-colors hover:text-blue-500">
+     @click="participantsTab = !participantsTab"
+     :class="{'text-blue-500': participantsTab}"
+     class="absolute flex lg:hidden right-0
+
+     text-blue-300 stroke-current transition-colors hover:text-blue-500">
+     <div>
      <%= render(PlanningPokerWeb.IconView, "icon_participants.html") %>
+     </div>
+     <div class="text-blue-500 font-bold pl-2">2</div>
 </div>

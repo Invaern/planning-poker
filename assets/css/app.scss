@@ -4,6 +4,10 @@
 
 @import "../node_modules/nprogress/nprogress.css";
 
+[x-cloak] {
+  display: none !important;
+}
+
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {
