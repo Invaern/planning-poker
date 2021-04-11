@@ -38,11 +38,8 @@ module.exports = {
           '100%': {transform: 'translateX(0%)'}
         }
       },
-      minHeight: {
-        '3/4-screen': '75vh'
-      },
-      maxHeight: {
-        '4/5': '80%',
+      height: {
+        '85-screen': '85vh'
       },
       maxWidth: {
         '24': '6rem'
