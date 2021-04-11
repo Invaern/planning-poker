@@ -2,14 +2,18 @@ defmodule PlanningPokerWeb.BoardView do
   use PlanningPokerWeb, :view
 
 
-  def card(card, show_prev \\ false)
-  def card(card, show_prev) do
+  def card(card, show_prev \\ false, template \\ "card.html")
+  def card(card, show_prev, template) do
     {color, value} = get_color_value(card.type)
     owner = card.owner
     {prev_color, prev_val} = get_prev_color_value(card)
-    render("card.html", owner: owner, color: color, value: value,
+    render(template, owner: owner, color: color, value: value,
                         show_prev: show_prev && card.prev_val,
                         prev_val: prev_val, prev_color: prev_color)
+  end
+
+  def player_card(card) do
+    card(card, true, "player_card.html")
   end
 
   def deck_card(card_value) do
@@ -20,7 +24,8 @@ defmodule PlanningPokerWeb.BoardView do
   def action_buttons(:voting) do
     assigns = %{:__changed__ => nil}
     ~L"""
-    <button class="w-1/2 flex items-center justify-center
+    <button class="flex items-center justify-center
+    w-36 h-10 md:h-auto md:w-1/2
     bg-blue-500 hover:bg-blue-700 text-white focus:outline-none
     lg:text-sm xl:text-base
     transition-colors font-bold py-2 px-4 rounded"
@@ -31,13 +36,15 @@ defmodule PlanningPokerWeb.BoardView do
   def action_buttons(:revealed) do
     assigns = %{:__changed__ => nil}
     ~L"""
-    <button class="w-1/2 flex items-center justify-center
+    <button class="flex items-center justify-center
+    w-36 h-10 md:w-1/2 md:h-auto
     bg-green-600 hover:bg-green-700 text-white focus:outline-none
     lg:text-sm xl:text-base
     transition-colors font-bold py-2 px-4 rounded"
     phx-click="new_draw"
     type="button">New</button>
-    <button class="w-1/2 flex items-center justify-center
+    <button class="flex items-center justify-center
+    w-36 h-10 md:h-auto md:w-1/2
     text-green-600 hover:text-green-700 focus:outline-none
     lg:text-sm xl:text-base
     transition-color font-bold py-2 px-4 rounded"

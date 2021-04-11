@@ -16,6 +16,9 @@ module.exports = {
         green: colors.green,
         lightBlue: colors.lightBlue,
       },
+      spacing: {
+        '30': '7.5rem'
+      },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out both',
         'fade-out': 'fadeOut 0.5s ease-in-out both',

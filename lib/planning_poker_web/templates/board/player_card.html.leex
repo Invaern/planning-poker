@@ -1,0 +1,30 @@
+<div data-type="player_card"
+     class="animate-fade-in
+            flex flex-row-reverse items-stretch md:flex-col flex-shrink-0
+            row-start-3
+            w-36 h-10 md:w-24 md:h-36 shadow
+            border-solid border-gray-100 border rounded
+            md:m-2">
+    <div class="flex flex-1 justify-center items-center
+                relative">
+        <span class="font-bold tracking-tight
+                     text-lg md:text-5xl xl:text-6xl 2xl:text-7xl
+                     transition duration-200
+                     <%= @color %>">
+            <%= @value %>
+        </span>
+
+    <%= if @show_prev do %>
+        <span class="absolute bottom-0 right-0
+                     transition duration-200 <%= @prev_color %>
+                     font-medium text-xs md:text tracking-tight">
+            <%= @prev_val %>
+        </span>
+
+    <% end %>
+    </div>
+    <div class="flex justify-center items-center
+                p-2 md:p-1 bg-gray-100">
+        <div title="<%= @owner %>" class="truncate"><%= @owner %></div>
+    </div>
+</div>

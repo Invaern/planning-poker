@@ -1,18 +1,33 @@
-<div id="played_cards" class="flex flex-grow flex-wrap px-10 justify-center content-start">
+<div id="played_cards"
+     class="flex flex-grow flex-wrap justify-center content-start
+            sm:px-10 pt-8 pb-4 md:py-6 sm:py-0 ">
         <%= for card <- @cards do %>
             <%= PlanningPokerWeb.BoardView.card(card, :revealed == @room.state) %>
         <% end %>
 </div>
-<div id="action_buttons" class="hidden sm:flex justify-center lg:hidden">
+<div id="action_buttons_md" class="hidden md:flex justify-center lg:hidden">
     <div id="buttons_box" class="flex w-64">
         <%= PlanningPokerWeb.BoardView.action_buttons(@room.state) %>
     </div>
 </div>
- <div id="player_cards" class="w-full flex">
-    <%= if @user_card do %>
-        <%= PlanningPokerWeb.BoardView.card(@user_card, true) %>
-        <div class="flex w-full animate-fade-in">
-            <div class="flex justify-center w-full space-x-1.5 transition-all duration-500 <%= cards_animation(@room.state) %>">
+ <div id="player_cards" class="w-full flex h-30 mb-2">
+        <div id="player_card_section"
+             class="grid grid-rows-3 grid-cols-1 md:grid-rows-1
+                    flex-shrink-0">
+            <div id="action_buttons_sm"
+                 class="md:hidden row-span-2 flex flex-col flex-1 justify-between w-36">
+                <%= PlanningPokerWeb.BoardView.action_buttons(@room.state) %>
+            </div>
+        <%= if @user_card do %>
+            <%= PlanningPokerWeb.BoardView.player_card(@user_card) %>
+        <% end %>
+        </div>
+        <div id="deck"
+             class="flex w-full animate-fade-in px-2">
+            <div class="grid grid-cols-3 grid-rows-3 gap-2
+                        sm:grid-cols-5 sm:grid-rows-2
+                        md:flex md:justify-center md:flex-wrap
+                        w-full md:space-x-1.5 transition-all duration-500 <%= cards_animation(@room.state) %>">
             <%= PlanningPokerWeb.BoardView.deck_card(:half) %>
             <%= PlanningPokerWeb.BoardView.deck_card(:one) %>
             <%= PlanningPokerWeb.BoardView.deck_card(:two) %>
@@ -24,21 +39,9 @@
             <%= PlanningPokerWeb.BoardView.deck_card(:question) %>
             </div>
         </div>
-    <% end %>
 </div>
 <div title="Log out"
      phx-click="log_out"
      class="absolute text-gray-400 stroke-current transition-colors hover:text-red-600">
      <%= render(PlanningPokerWeb.IconView, "icon_logout.html") %>
-</div>
-<div title="Participants"
-     @click="participantsTab = !participantsTab"
-     :class="{'text-blue-500': participantsTab}"
-     class="absolute flex lg:hidden right-0
-
-     text-blue-300 stroke-current transition-colors hover:text-blue-500">
-     <div>
-     <%= render(PlanningPokerWeb.IconView, "icon_participants.html") %>
-     </div>
-     <div class="text-blue-500 font-bold pl-2"><%= Enum.count(@room.participants) %></div>
 </div>

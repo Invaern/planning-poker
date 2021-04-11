@@ -1,11 +1,23 @@
-<div class="animate-fade-in rounded shadow flex flex-col flex-shrink-0  w-24 h-36 border-gray-100 border-solid border m-2">
-    <div class="flex flex-1 justify-center items-center relative">
+<div data-type="played_card"
+     class="animate-fade-in
+            flex flex-row-reverse items-stretch md:flex-col flex-shrink-0
+            w-36 h-8 md:w-24 md:h-36 shadow
+            border-solid border-gray-100 border rounded
+            mb-2 mr-2 md:m-2">
+    <div class="flex flex-1 justify-center items-center
+                relative">
     <%= content_tag(:span, @value, class: Enum.join(["transition","duration-200","font-medium", "md:text-5xl", "xl:text-6xl", "2xl:text-7xl", "tracking-tight", @color], " ")) %>
     <%= if @show_prev do %>
-        <%= content_tag(:span, @prev_val, class: Enum.join(["absolute", "bottom-1", "right-1", "transition","duration-200","font-medium", "text", "tracking-tight", @prev_color], " ")) %>
+    <span class="absolute bottom-1 right-1
+                 transition duration-200 <%= @prev_color %>
+                 font-medium text-xs md:text tracking-light">
+        <%= @prev_val %>
+    </span>
+
     <% end %>
     </div>
-    <div class="flex justify-center items-center h-8 bg-gray-100">
+    <div class="flex justify-center items-center
+                p-2 md:p-1 bg-gray-100">
         <div title="<%= @owner %>" class="truncate"><%= @owner %></div>
     </div>
 </div>

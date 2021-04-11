@@ -1,6 +1,14 @@
-<div class="rounded shadow flex flex-col flex-1  max-w-24  h-36 border-gray-100 border-solid border border-b-0 bg-white
-            transition transform lg:hover:-translate-y-4 mt-2 mb-2 overflow-hidden" phx-click="vote" phx-value-ref="<%= @value_atom %>">
+<div class="rounded shadow flex md:flex-col md:flex-1
+            md:max-w-24  md:h-36 md:mr-2 md:mt-2 md:mb-2
+            border-solid border border-b-0 bg-white border-gray-100
+            transition transform lg:hover:-translate-y-4
+            overflow-hidden"
+     phx-click="vote" phx-value-ref="<%= @value_atom %>">
     <div class="flex flex-1 justify-center items-center">
-    <%= content_tag(:span, @value, class: Enum.join(["font-medium", "md:text-5xl","xl:text-6xl", "2xl:text-7xl", "tracking-tight", @color], " ")) %>
+        <span class="font-medium tracking-tight
+                     text-2xl sm:text-4xl md:text-5xl xl:text-6xl 2xl:text-7xl
+                     <%= @color %>">
+            <%= @value %>
+        </span>
     </div>
 </div>
