@@ -1,6 +1,6 @@
 <div id="played_cards"
      class="flex flex-grow flex-wrap justify-center content-start
-            sm:px-10 mt-8 mb-4 md:py-6 sm:py-0 overflow-y-scroll">
+            sm:px-10 mt-8 mb-4 md:py-6 sm:py-0 overflow-y-auto">
         <%= for card <- @cards do %>
             <%= PlanningPokerWeb.BoardView.card(card, :revealed == @room.state) %>
         <% end %>

@@ -10,7 +10,7 @@ defmodule PlanningPokerWeb.RoomLive.UserFormComponent do
     |> Map.put_new(:max_len, @max_name_length)
     ~L"""
     <div class="w-full flex justify-center items-center">
-    <%= f = form_for :join, "#", [phx_submit: :save, phx_change: :validate, phx_target: @myself,  class: "w-1/3 flex flex-col"]  %>
+    <%= f = form_for :join, "#", [phx_submit: :save, phx_change: :validate, phx_target: @myself,  class: "w-full sm:w-1/2 lg:w-1/3 flex flex-col"]  %>
     <div class="flex border-b border-blue-500 py-1">
         <%= text_input f, :user_name, placeholder: "Name", value: @user_input,
             "phx-debounce": "200",
